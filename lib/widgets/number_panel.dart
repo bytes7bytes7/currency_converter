@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'circle_button.dart';
+
 class NumberPanel extends StatelessWidget {
   const NumberPanel({
     Key? key,
@@ -22,27 +24,10 @@ class NumberPanel extends StatelessWidget {
               if (e == ' ') {
                 return SizedBox(width: space);
               } else {
-                return Container(
-                  height: buttonWidth,
-                  width: buttonWidth,
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).splashColor,
-                    shape: BoxShape.circle,
-                    boxShadow: [
-                      BoxShadow(
-                        color: Theme.of(context).focusColor.withOpacity(0.25),
-                        offset: const Offset(0, 0),
-                        blurRadius: 10,
-                        spreadRadius: 0,
-                      ),
-                    ],
-                  ),
-                  child: Center(
-                    child: Text(
-                      e,
-                      style: Theme.of(context).textTheme.bodyText1,
-                    ),
-                  ),
+                return CircleButton(
+                  buttonWidth: buttonWidth,
+                  data: e,
+                  onTap: () {},
                 );
               }
             }).toList(),
@@ -50,31 +35,14 @@ class NumberPanel extends StatelessWidget {
           SizedBox(height: space),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
-            children: '7 8 9'.characters.map((e) {
+            children: '4 5 6'.characters.map((e) {
               if (e == ' ') {
                 return SizedBox(width: space);
               } else {
-                return Container(
-                  height: buttonWidth,
-                  width: buttonWidth,
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).splashColor,
-                    shape: BoxShape.circle,
-                    boxShadow: [
-                      BoxShadow(
-                        color: Theme.of(context).focusColor.withOpacity(0.25),
-                        offset: const Offset(0, 0),
-                        blurRadius: 10,
-                        spreadRadius: 0,
-                      ),
-                    ],
-                  ),
-                  child: Center(
-                    child: Text(
-                      e,
-                      style: Theme.of(context).textTheme.bodyText1,
-                    ),
-                  ),
+                return CircleButton(
+                  buttonWidth: buttonWidth,
+                  data: e,
+                  onTap: () {},
                 );
               }
             }).toList(),
@@ -82,31 +50,14 @@ class NumberPanel extends StatelessWidget {
           SizedBox(height: space),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
-            children: '7 8 9'.characters.map((e) {
+            children: '1 2 3'.characters.map((e) {
               if (e == ' ') {
                 return SizedBox(width: space);
               } else {
-                return Container(
-                  height: buttonWidth,
-                  width: buttonWidth,
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).splashColor,
-                    shape: BoxShape.circle,
-                    boxShadow: [
-                      BoxShadow(
-                        color: Theme.of(context).focusColor.withOpacity(0.25),
-                        offset: const Offset(0, 0),
-                        blurRadius: 10,
-                        spreadRadius: 0,
-                      ),
-                    ],
-                  ),
-                  child: Center(
-                    child: Text(
-                      e,
-                      style: Theme.of(context).textTheme.bodyText1,
-                    ),
-                  ),
+                return CircleButton(
+                  buttonWidth: buttonWidth,
+                  data: e,
+                  onTap: () {},
                 );
               }
             }).toList(),
@@ -118,33 +69,10 @@ class NumberPanel extends StatelessWidget {
               if (e == ' ') {
                 return SizedBox(width: space);
               } else {
-                return Container(
-                  height: buttonWidth,
-                  width: buttonWidth,
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).splashColor,
-                    shape: BoxShape.circle,
-                    boxShadow: [
-                      BoxShadow(
-                        color: Theme.of(context).focusColor.withOpacity(0.25),
-                        offset: const Offset(0, 0),
-                        blurRadius: 10,
-                        spreadRadius: 0,
-                      ),
-                    ],
-                  ),
-                  child: Center(
-                    child: (e is IconData)
-                        ? Icon(
-                            e,
-                            size: 28.0,
-                            color: Theme.of(context).focusColor,
-                          )
-                        : Text(
-                            e.toString(),
-                            style: Theme.of(context).textTheme.bodyText1,
-                          ),
-                  ),
+                return CircleButton(
+                  buttonWidth: buttonWidth,
+                  data: e,
+                  onTap: () {},
                 );
               }
             }).toList(),
