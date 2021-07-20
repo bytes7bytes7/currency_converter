@@ -4,4 +4,4 @@ Flutter app - Currency Converter
 
 ## Screenshots
 
-<img src="screenshots/convert_screen.jpg" height="520px">
+<img src="screenshots/convert_screen.png" height="520px">
