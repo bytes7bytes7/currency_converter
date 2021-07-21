@@ -29,6 +29,7 @@ class CurrencyInputField extends StatelessWidget {
       decoration: InputDecoration(
         prefixIcon: RawMaterialButton(
           onPressed: () {},
+          splashColor: Theme.of(context).disabledColor,
           child: SizedBox(
             width: 100,
             height: 40,

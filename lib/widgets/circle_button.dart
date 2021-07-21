@@ -25,8 +25,8 @@ class CircleButton extends StatelessWidget {
         boxShadow: [
           BoxShadow(
             color: Theme.of(context).focusColor.withOpacity(0.25),
-            offset: const Offset(0, 0),
-            blurRadius: 10,
+            offset: const Offset(3, 3),
+            blurRadius: 5,
             spreadRadius: 0,
           ),
         ],
@@ -34,12 +34,12 @@ class CircleButton extends StatelessWidget {
       child: ClipOval(
         child: Material(
           child: InkWell(
-            splashColor: Theme.of(context).disabledColor,
+            splashColor: Theme.of(context).disabledColor.withOpacity(0.25),
             onTap: () {
               onTap();
             },
             onLongPress: () {
-              if(data=='erase'){
+              if (data == 'erase') {
                 onLongPress();
               }
             },

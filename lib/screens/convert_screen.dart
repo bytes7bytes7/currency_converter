@@ -4,6 +4,8 @@ import '../widgets/number_panel.dart';
 import '../widgets/currency_input_field.dart';
 import '../models/currency.dart';
 import '../services/amount_text_input_formatter.dart';
+import 'history_screen.dart';
+import 'settings_screen.dart';
 
 class ConvertScreen extends StatelessWidget {
   ConvertScreen({
@@ -27,86 +29,52 @@ class ConvertScreen extends StatelessWidget {
     ),
   );
   final TextEditingController currencyController1 = TextEditingController();
-  final TextEditingController currencyController2 = TextEditingController();
+  final TextEditingController currencyController2 =
+      TextEditingController(text: '0');
   final ValueNotifier<TextEditingController> textNotifier =
       ValueNotifier(TextEditingController());
   final AmountTextInputFormatter _formatter = AmountTextInputFormatter();
 
   void changeValue(String action) {
     if (action == 'erase') {
-      String oldText = textNotifier.value.text;
-      if (oldText.isNotEmpty) {
-        String newText = oldText.substring(0, oldText.length - 1);
-        TextEditingValue value = _formatter.formatEditUpdate(
-          TextEditingValue(
-              text: oldText, selection: textNotifier.value.selection),
-          TextEditingValue(text: newText),
-        );
-        textNotifier.value.text = value.text;
+      if (textNotifier.value.selection.end != 0 &&
+          textNotifier.value.text.isNotEmpty) {
+        final tmp = textNotifier.value.text.split('');
+        if (textNotifier.value.selection.end == -1) {
+          tmp.removeAt(textNotifier.value.text.length - 1);
+        } else {
+          tmp.removeAt(textNotifier.value.selection.end - 1);
+        }
+        textNotifier.value.text = tmp.join('');
       }
     } else {
-      print(textNotifier.value.selection.extentOffset);
-      String newText = textNotifier.value.text;
-      final tmp = newText.split('');
-      tmp.insert(
-          textNotifier.value.selection.end != -1
-              ? textNotifier.value.selection.end
-              : textNotifier.value.text.length,
-          action);
-      newText = tmp.join('');
-      TextEditingValue value = _formatter.formatEditUpdate(
-        TextEditingValue(
-          text: textNotifier.value.text,
-          selection: textNotifier.value.selection,
-        ),
-        TextEditingValue(
-          text: newText,
-          selection: textNotifier.value.selection.copyWith(
-            baseOffset: textNotifier.value.selection.extentOffset + 1,
-            extentOffset: textNotifier.value.selection.extentOffset + 1,
-          ),
+      TextEditingValue oldValue = textNotifier.value.value;
+      final tmp = textNotifier.value.text.split('');
+      if (textNotifier.value.selection.end == -1) {
+        tmp.insert(textNotifier.value.text.length, action);
+      } else {
+        tmp.insert(textNotifier.value.selection.end, action);
+      }
+      int offset;
+      if (textNotifier.value.selection.end == -1) {
+        offset = -1;
+      } else {
+        offset = textNotifier.value.selection.end + 1;
+      }
+      TextEditingValue newValue = TextEditingValue(
+        text: tmp.join(''),
+        selection: TextSelection(
+          baseOffset: offset,
+          extentOffset: offset,
         ),
       );
-      textNotifier.value.text = value.text;
-    }
-    if (textNotifier.value == currencyController1) {
-      String curr1Text = currencyController1.text;
-      if (currencyController1.text.endsWith(',')) {
-        curr1Text = currencyController1.text
-            .substring(0, currencyController1.text.length - 1);
-      }
-      curr1Text = curr1Text.replaceAll(',', '').replaceAll(' ', '');
-      if(curr1Text.isEmpty){
-        curr1Text = '0';
-      }
-      currencyController2.text = (double.parse(curr1Text) *
-              currencyNotifier2.value.rate! /
-              currencyNotifier1.value.rate!)
-          .toString();
-      if (currencyController2.text.isEmpty) {
-        currencyController2.text = '0';
-      }
-    } else {
-      String curr2Text = currencyController2.text;
-      if (currencyController2.text.endsWith(',')) {
-        curr2Text = currencyController2.text
-            .substring(0, currencyController2.text.length - 1);
-      }
-      curr2Text = curr2Text.replaceAll(',', '').replaceAll(' ', '');
-      if(curr2Text.isEmpty){
-        curr2Text = '0';
-      }
-      currencyController1.text = (double.parse(curr2Text) *
-              currencyNotifier1.value.rate! /
-              currencyNotifier2.value.rate!)
-          .toString();
-      if (currencyController1.text.isEmpty) {
-        currencyController1.text = '0';
-      }
+      textNotifier.value.value = _formatter.formatEditUpdate(oldValue, newValue);
     }
   }
 
   void clearField() {
+    currencyController1.text = '0';
+    currencyController2.text = '0';
     textNotifier.value.text = '';
   }
 
@@ -125,20 +93,25 @@ class ConvertScreen extends StatelessWidget {
                 const Spacer(
                   flex: 1,
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      Icons.language_outlined,
-                      color: Theme.of(context).disabledColor,
-                      size: 20.0,
-                    ),
-                    const SizedBox(width: 5.0),
-                    Text(
-                      'Обновлено 12:51',
-                      style: Theme.of(context).textTheme.subtitle1,
-                    ),
-                  ],
+                RawMaterialButton(
+                  splashColor:
+                      Theme.of(context).disabledColor.withOpacity(0.25),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.language_outlined,
+                        color: Theme.of(context).disabledColor,
+                        size: 20.0,
+                      ),
+                      const SizedBox(width: 5.0),
+                      Text(
+                        'Обновлено 12:51',
+                        style: Theme.of(context).textTheme.subtitle1,
+                      ),
+                    ],
+                  ),
+                  onPressed: () {},
                 ),
                 const Spacer(
                   flex: 1,
@@ -154,7 +127,8 @@ class ConvertScreen extends StatelessWidget {
                     color: Theme.of(context).focusColor,
                     size: 28.0,
                   ),
-                  splashColor: Theme.of(context).disabledColor,
+                  splashColor:
+                      Theme.of(context).disabledColor.withOpacity(0.25),
                   splashRadius: 22.0,
                   onPressed: () {
                     final String text = currencyController1.text;
@@ -204,13 +178,19 @@ class _AppBar extends StatelessWidget implements PreferredSizeWidget {
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       leading: IconButton(
         icon: Icon(
-          Icons.refresh_outlined,
+          Icons.settings_outlined,
           size: 28.0,
           color: Theme.of(context).focusColor,
         ),
-        splashColor: Theme.of(context).disabledColor,
+        splashColor: Theme.of(context).disabledColor.withOpacity(0.25),
         splashRadius: 22.0,
-        onPressed: () {},
+        onPressed: () {
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) => const SettingsScreen(),
+            ),
+          );
+        },
       ),
       centerTitle: true,
       title: Text(
@@ -224,9 +204,15 @@ class _AppBar extends StatelessWidget implements PreferredSizeWidget {
             size: 28.0,
             color: Theme.of(context).focusColor,
           ),
-          splashColor: Theme.of(context).disabledColor,
+          splashColor: Theme.of(context).disabledColor.withOpacity(0.25),
           splashRadius: 22.0,
-          onPressed: () {},
+          onPressed: () {
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) => const HistoryScreen(),
+              ),
+            );
+          },
         ),
       ],
     );

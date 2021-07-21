@@ -22,6 +22,7 @@ class AmountTextInputFormatter extends TextInputFormatter {
       TextEditingValue oldValue, TextEditingValue newValue) {
     String formattedValue = '';
     int cursorPosition = newValue.selection.end;
+    print(cursorPosition);
 
     // TODO: I can add condition to check if a space has been deleted
 
