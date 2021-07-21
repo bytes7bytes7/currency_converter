@@ -11,73 +11,73 @@ class ConvertScreen extends StatelessWidget {
 
   final ValueNotifier<Currency> currencyNotifier1 = ValueNotifier(Currency());
   final ValueNotifier<Currency> currencyNotifier2 = ValueNotifier(Currency());
-  final TextEditingController currencyController1 = TextEditingController();
+  final TextEditingController currencyController1 = TextEditingController(text: '123');
   final TextEditingController currencyController2 = TextEditingController();
+  final ValueNotifier<TextEditingController> textNotifier = ValueNotifier(TextEditingController());
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      behavior: HitTestBehavior.translucent,
-      onTap: () {
-        FocusScope.of(context).requestFocus(FocusNode());
-      },
-      child: Scaffold(
-        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-        appBar: const _AppBar(),
-        body: SafeArea(
-          child: Center(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 30.0),
-              child: Column(
-                children: [
-                  const Spacer(
-                    flex: 1,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(
-                        Icons.language_outlined,
-                        color: Theme.of(context).disabledColor,
-                        size: 20.0,
-                      ),
-                      const SizedBox(width: 5.0),
-                      Text(
-                        'Обновлено 12:51',
-                        style: Theme.of(context).textTheme.subtitle1,
-                      ),
-                    ],
-                  ),
-                  const Spacer(
-                    flex: 1,
-                  ),
-                  CurrencyInputField(
-                    currencyNotifier: currencyNotifier1,
-                    textEditingController: currencyController1,
-                  ),
-                  IconButton(
-                    icon: Icon(
-                      Icons.swap_vert_outlined,
-                      color: Theme.of(context).focusColor,
-                      size: 28.0,
+    textNotifier.value = currencyController1;
+    return Scaffold(
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      appBar: const _AppBar(),
+      body: SafeArea(
+        child: Center(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 30.0),
+            child: Column(
+              children: [
+                const Spacer(
+                  flex: 1,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.language_outlined,
+                      color: Theme.of(context).disabledColor,
+                      size: 20.0,
                     ),
-                    splashColor: Theme.of(context).disabledColor,
-                    splashRadius: 22.0,
-                    onPressed: () {},
+                    const SizedBox(width: 5.0),
+                    Text(
+                      'Обновлено 12:51',
+                      style: Theme.of(context).textTheme.subtitle1,
+                    ),
+                  ],
+                ),
+                const Spacer(
+                  flex: 1,
+                ),
+                CurrencyInputField(
+                  currencyNotifier: currencyNotifier1,
+                  textEditingController: currencyController1,
+                  textNotifier: textNotifier,
+                ),
+                IconButton(
+                  icon: Icon(
+                    Icons.swap_vert_outlined,
+                    color: Theme.of(context).focusColor,
+                    size: 28.0,
                   ),
-                  CurrencyInputField(
-                    currencyNotifier: currencyNotifier2,
-                    textEditingController: currencyController2,
-                  ),
-                  const Spacer(
-                    flex: 2,
-                  ),
-                  const NumberPanel(),
-                  const Spacer(
-                    flex: 2,
-                  ),
-                ],
-              ),
+                  splashColor: Theme.of(context).disabledColor,
+                  splashRadius: 22.0,
+                  onPressed: () {},
+                ),
+                CurrencyInputField(
+                  currencyNotifier: currencyNotifier2,
+                  textEditingController: currencyController2,
+                  textNotifier: textNotifier,
+                ),
+                const Spacer(
+                  flex: 2,
+                ),
+                NumberPanel(
+                  textNotifier: textNotifier,
+                ),
+                const Spacer(
+                  flex: 2,
+                ),
+              ],
             ),
           ),
         ),

@@ -9,7 +9,7 @@ class CircleButton extends StatelessWidget {
   }) : super(key: key);
 
   final double buttonWidth;
-  final dynamic data;
+  final String data;
   final Function onTap;
 
   @override
@@ -33,23 +33,23 @@ class CircleButton extends StatelessWidget {
         child: Material(
           child: InkWell(
             splashColor: Theme.of(context).disabledColor,
-            onTap: () {},
+            onTap: () {
+              onTap();
+            },
             child: CircleAvatar(
               foregroundColor: Colors.transparent,
               backgroundColor: Colors.transparent,
               child: Center(
-                child: (data is IconData)
+                child: (data == 'erase')
                     ? Icon(
-                        data,
+                        Icons.backspace_outlined,
                         size: 28.0,
                         color: Theme.of(context).focusColor,
                       )
-                    : (data is String)
-                        ? Text(
-                            data,
-                            style: Theme.of(context).textTheme.bodyText1,
-                          )
-                        : const SizedBox.shrink(),
+                    : Text(
+                        data,
+                        style: Theme.of(context).textTheme.bodyText1,
+                      ),
               ),
             ),
           ),

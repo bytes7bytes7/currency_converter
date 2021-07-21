@@ -7,44 +7,56 @@ class CurrencyInputField extends StatelessWidget {
     Key? key,
     required this.currencyNotifier,
     required this.textEditingController,
+    required this.textNotifier,
   }) : super(key: key);
 
   final ValueNotifier<Currency> currencyNotifier;
   final TextEditingController textEditingController;
+  final ValueNotifier<TextEditingController> textNotifier;
 
   @override
   Widget build(BuildContext context) {
     return TextField(
       controller: textEditingController,
-      enabled: false,
+      readOnly: true,
+      showCursor: true,
+      autofocus: true,
+      onTap: () {
+        textNotifier.value = textEditingController;
+      },
       style: Theme.of(context).textTheme.bodyText1,
       textAlign: TextAlign.end,
       decoration: InputDecoration(
-        prefixIcon: SizedBox(
-          width: 100,
-          child: Material(
-            child: InkWell(
-              onTap: () {},
-              child: Row(
-                children: [
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(30.0),
-                    child: SizedBox(
-                      height: 30,
-                      width: 47,
-                      child: Image.asset(
-                        'icons/flags/png/ru.png',
-                        package: 'country_icons',
-                      ),
+        prefixIcon: RawMaterialButton(
+          onPressed: () {},
+          child: SizedBox(
+            width: 100,
+            height: 40,
+            child: Row(
+              children: [
+                SizedBox(
+                  width: 40,
+                  height: 40,
+                  child: RichText(
+                    textAlign: TextAlign.center,
+                    text: TextSpan(
+                      children: <TextSpan>[
+                        TextSpan(
+                          text: Currency(letters: 'ARS').getFlag(),
+                          style: const TextStyle(
+                            fontSize: 35,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                  const SizedBox(width: 5),
-                  Text(
-                    'RUB',
-                    style: Theme.of(context).textTheme.subtitle2,
-                  ),
-                ],
-              ),
+                ),
+                const SizedBox(width: 5),
+                Text(
+                  'RUB',
+                  style: Theme.of(context).textTheme.subtitle2,
+                ),
+              ],
             ),
           ),
         ),

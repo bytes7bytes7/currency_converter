@@ -5,7 +5,22 @@ import 'circle_button.dart';
 class NumberPanel extends StatelessWidget {
   const NumberPanel({
     Key? key,
+    required this.textNotifier,
   }) : super(key: key);
+
+  final ValueNotifier<TextEditingController> textNotifier;
+
+  void changeValue(String action) {
+    if (action == 'erase') {
+      String text = textNotifier.value.text;
+      if (text.isNotEmpty) {
+        text = text.substring(0, text.length - 1);
+        textNotifier.value.text = text;
+      }
+    } else {
+      textNotifier.value.text += action;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +42,9 @@ class NumberPanel extends StatelessWidget {
                 return CircleButton(
                   buttonWidth: buttonWidth,
                   data: e,
-                  onTap: () {},
+                  onTap: () {
+                    changeValue(e);
+                  },
                 );
               }
             }).toList(),
@@ -42,7 +59,9 @@ class NumberPanel extends StatelessWidget {
                 return CircleButton(
                   buttonWidth: buttonWidth,
                   data: e,
-                  onTap: () {},
+                  onTap: () {
+                    changeValue(e);
+                  },
                 );
               }
             }).toList(),
@@ -57,7 +76,9 @@ class NumberPanel extends StatelessWidget {
                 return CircleButton(
                   buttonWidth: buttonWidth,
                   data: e,
-                  onTap: () {},
+                  onTap: () {
+                    changeValue(e);
+                  },
                 );
               }
             }).toList(),
@@ -65,14 +86,16 @@ class NumberPanel extends StatelessWidget {
           SizedBox(height: space),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
-            children: [',', ' ', '0', ' ', Icons.backspace_outlined].map((e) {
+            children: [',', ' ', '0', ' ', 'erase'].map((e) {
               if (e == ' ') {
                 return SizedBox(width: space);
               } else {
                 return CircleButton(
                   buttonWidth: buttonWidth,
                   data: e,
-                  onTap: () {},
+                  onTap: () {
+                    changeValue(e);
+                  },
                 );
               }
             }).toList(),
