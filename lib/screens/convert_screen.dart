@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 
+import '../widgets/loading_label.dart';
 import '../widgets/number_panel.dart';
 import '../widgets/currency_input_field.dart';
 import '../models/currency.dart';
 import '../services/amount_text_input_formatter.dart';
+import '../bloc/exchange_bloc.dart';
 import 'history_screen.dart';
 import 'settings_screen.dart';
 
@@ -146,26 +148,78 @@ class ConvertScreen extends StatelessWidget {
                 const Spacer(
                   flex: 1,
                 ),
-                RawMaterialButton(
-                  splashColor:
-                      Theme.of(context).disabledColor.withOpacity(0.25),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(
-                        Icons.language_outlined,
-                        color: Theme.of(context).disabledColor,
-                        size: 20.0,
-                      ),
-                      const SizedBox(width: 5.0),
-                      Text(
-                        'Обновлено 12:51',
-                        style: Theme.of(context).textTheme.subtitle1,
-                      ),
-                    ],
-                  ),
-                  onPressed: () {},
-                ),
+                StreamBuilder(
+                    stream: ExchangeBloc.exchange,
+                    initialData: ExchangeInitState(),
+                    builder: (context, snapshot) {
+                      if (snapshot.data is ExchangeInitState) {
+                        ExchangeBloc.updateExchanges();
+                        return RawMaterialButton(
+                          splashColor:
+                              Theme.of(context).disabledColor.withOpacity(0.25),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.language_outlined,
+                                color: Theme.of(context).disabledColor,
+                                size: 20.0,
+                              ),
+                              const SizedBox(width: 5.0),
+                              Text(
+                                'Обновлено 12:51',
+                                style: Theme.of(context).textTheme.subtitle1,
+                              ),
+                            ],
+                          ),
+                          onPressed: () {
+                            ExchangeBloc.updateExchanges();
+                          },
+                        );
+                      } else if (snapshot.data is ExchangeLoadingState) {
+                        return const LoadingLabel();
+                      } else if (snapshot.data is ExchangeDataState) {
+                        ExchangeDataState state = snapshot.data as ExchangeDataState;
+                        return SizedBox(
+                          height: 24,
+                          child: RawMaterialButton(
+                            splashColor:
+                                Theme.of(context).disabledColor.withOpacity(0.25),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.language_outlined,
+                                  color: Theme.of(context).disabledColor,
+                                  size: 20.0,
+                                ),
+                                const SizedBox(width: 5.0),
+                                Text(
+                                  'Обновлено: ${state.date}',
+                                  style: Theme.of(context).textTheme.subtitle1,
+                                ),
+                              ],
+                            ),
+                            onPressed: () {
+                              ExchangeBloc.updateExchanges();
+                            },
+                          ),
+                        );
+                      } else {
+                        return Container(
+                          color: Colors.red,
+                          height: 10,
+                          width: 100,
+                        );
+                        // return ErrorLabel(
+                        //   error: snapshot.data.error,
+                        //   stackTrace: snapshot.data.stackTrace,
+                        //   onPressed: () {
+                        //     Bloc.bloc.clientBloc.loadAllClients();
+                        //   },
+                        // );
+                      }
+                    }),
                 const Spacer(
                   flex: 1,
                 ),
