@@ -1,21 +1,19 @@
 class Currency {
   Currency({
-    this.code,
-    this.letters,
+    this.iso,
     this.name,
-    this.shortName,
+    this.country,
     this.rate,
   });
 
-  int? code;
-  String? letters;
+  String? iso;
   String? name;
-  String? shortName;
+  String? country;
   double? rate; // USA dollar rate
 
   String getFlag() {
-    final int firstLetter = letters!.codeUnitAt(0) - 0x41 + 0x1F1E6;
-    final int secondLetter = letters!.codeUnitAt(1) - 0x41 + 0x1F1E6;
+    final int firstLetter = iso!.codeUnitAt(0) - 0x41 + 0x1F1E6;
+    final int secondLetter = iso!.codeUnitAt(1) - 0x41 + 0x1F1E6;
     return String.fromCharCode(firstLetter) + String.fromCharCode(secondLetter);
   }
 }

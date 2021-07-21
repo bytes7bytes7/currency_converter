@@ -16,7 +16,7 @@ class CurrencyInputField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return TextField(
+    return TextFormField(
       controller: textEditingController,
       readOnly: true,
       showCursor: true,
@@ -32,31 +32,36 @@ class CurrencyInputField extends StatelessWidget {
           child: SizedBox(
             width: 100,
             height: 40,
-            child: Row(
-              children: [
-                SizedBox(
-                  width: 40,
-                  height: 40,
-                  child: RichText(
-                    textAlign: TextAlign.center,
-                    text: TextSpan(
-                      children: <TextSpan>[
-                        TextSpan(
-                          text: Currency(letters: 'ARS').getFlag(),
-                          style: const TextStyle(
-                            fontSize: 35,
-                          ),
+            child: ValueListenableBuilder(
+              valueListenable: currencyNotifier,
+              builder: (context, _ , __) {
+                return Row(
+                  children: [
+                    SizedBox(
+                      width: 40,
+                      height: 40,
+                      child: RichText(
+                        textAlign: TextAlign.center,
+                        text: TextSpan(
+                          children: <TextSpan>[
+                            TextSpan(
+                              text: currencyNotifier.value.getFlag(),
+                              style: const TextStyle(
+                                fontSize: 35,
+                              ),
+                            ),
+                          ],
                         ),
-                      ],
+                      ),
                     ),
-                  ),
-                ),
-                const SizedBox(width: 5),
-                Text(
-                  'RUB',
-                  style: Theme.of(context).textTheme.subtitle2,
-                ),
-              ],
+                    const SizedBox(width: 5),
+                    Text(
+                      currencyNotifier.value.iso!,
+                      style: Theme.of(context).textTheme.subtitle2,
+                    ),
+                  ],
+                );
+              }
             ),
           ),
         ),

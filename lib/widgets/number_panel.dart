@@ -6,21 +6,13 @@ class NumberPanel extends StatelessWidget {
   const NumberPanel({
     Key? key,
     required this.textNotifier,
+    required this.onTap,
+    required this.onLongPress,
   }) : super(key: key);
 
   final ValueNotifier<TextEditingController> textNotifier;
-
-  void changeValue(String action) {
-    if (action == 'erase') {
-      String text = textNotifier.value.text;
-      if (text.isNotEmpty) {
-        text = text.substring(0, text.length - 1);
-        textNotifier.value.text = text;
-      }
-    } else {
-      textNotifier.value.text += action;
-    }
-  }
+  final Function onTap;
+  final Function onLongPress;
 
   @override
   Widget build(BuildContext context) {
@@ -43,7 +35,10 @@ class NumberPanel extends StatelessWidget {
                   buttonWidth: buttonWidth,
                   data: e,
                   onTap: () {
-                    changeValue(e);
+                    onTap(e);
+                  },
+                  onLongPress: () {
+                    onLongPress();
                   },
                 );
               }
@@ -60,7 +55,10 @@ class NumberPanel extends StatelessWidget {
                   buttonWidth: buttonWidth,
                   data: e,
                   onTap: () {
-                    changeValue(e);
+                    onTap(e);
+                  },
+                  onLongPress: () {
+                    onLongPress();
                   },
                 );
               }
@@ -77,7 +75,10 @@ class NumberPanel extends StatelessWidget {
                   buttonWidth: buttonWidth,
                   data: e,
                   onTap: () {
-                    changeValue(e);
+                    onTap(e);
+                  },
+                  onLongPress: () {
+                    onLongPress();
                   },
                 );
               }
@@ -94,7 +95,10 @@ class NumberPanel extends StatelessWidget {
                   buttonWidth: buttonWidth,
                   data: e,
                   onTap: () {
-                    changeValue(e);
+                    onTap(e);
+                  },
+                  onLongPress: () {
+                    onLongPress();
                   },
                 );
               }

@@ -6,11 +6,13 @@ class CircleButton extends StatelessWidget {
     required this.buttonWidth,
     required this.data,
     required this.onTap,
+    required this.onLongPress,
   }) : super(key: key);
 
   final double buttonWidth;
   final String data;
   final Function onTap;
+  final Function onLongPress;
 
   @override
   Widget build(BuildContext context) {
@@ -35,6 +37,11 @@ class CircleButton extends StatelessWidget {
             splashColor: Theme.of(context).disabledColor,
             onTap: () {
               onTap();
+            },
+            onLongPress: () {
+              if(data=='erase'){
+                onLongPress();
+              }
             },
             child: CircleAvatar(
               foregroundColor: Colors.transparent,
