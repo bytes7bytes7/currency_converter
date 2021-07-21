@@ -39,13 +39,28 @@ class ConvertScreen extends StatelessWidget {
     if (action == 'erase') {
       if (textNotifier.value.selection.end != 0 &&
           textNotifier.value.text.isNotEmpty) {
+        final oldValue = textNotifier.value.value;
         final tmp = textNotifier.value.text.split('');
         if (textNotifier.value.selection.end == -1) {
           tmp.removeAt(textNotifier.value.text.length - 1);
         } else {
           tmp.removeAt(textNotifier.value.selection.end - 1);
         }
-        textNotifier.value.text = tmp.join('');
+        int offset;
+        if (textNotifier.value.selection.end == -1) {
+          offset = -1;
+        } else {
+          offset = textNotifier.value.selection.end - 1;
+        }
+        TextEditingValue newValue = TextEditingValue(
+          text: tmp.join(''),
+          selection: TextSelection(
+            baseOffset: offset,
+            extentOffset: offset,
+          ),
+        );
+        textNotifier.value.value =
+            _formatter.formatEditUpdate(oldValue, newValue);
       }
     } else {
       TextEditingValue oldValue = textNotifier.value.value;
@@ -68,7 +83,45 @@ class ConvertScreen extends StatelessWidget {
           extentOffset: offset,
         ),
       );
-      textNotifier.value.value = _formatter.formatEditUpdate(oldValue, newValue);
+      textNotifier.value.value =
+          _formatter.formatEditUpdate(oldValue, newValue);
+    }
+    if (textNotifier.value == currencyController1) {
+      final TextEditingValue oldValue = TextEditingValue(
+        text: currencyController2.text,
+      );
+      final String currText1 =
+          currencyController1.text.replaceAll(',', '.').replaceAll(' ', '');
+      if (currText1.isNotEmpty) {
+        double v = (double.parse(currText1) *
+            currencyNotifier2.value.rate! /
+            currencyNotifier1.value.rate!);
+        final TextEditingValue newValue = TextEditingValue(
+          text: v.toStringAsFixed(2),
+        );
+        currencyController2.text =
+            _formatter.formatEditUpdate(oldValue, newValue).text;
+      } else {
+        currencyController2.text = '0';
+      }
+    } else {
+      final TextEditingValue oldValue = TextEditingValue(
+        text: currencyController1.text,
+      );
+      final String currText2 =
+          currencyController2.text.replaceAll(',', '.').replaceAll(' ', '');
+      if (currText2.isNotEmpty) {
+        double v = double.parse(currText2) *
+            currencyNotifier1.value.rate! /
+            currencyNotifier2.value.rate!;
+        final TextEditingValue newValue = TextEditingValue(
+          text: v.toStringAsFixed(2),
+        );
+        currencyController1.text =
+            _formatter.formatEditUpdate(oldValue, newValue).text;
+      } else {
+        currencyController1.text = '0';
+      }
     }
   }
 
