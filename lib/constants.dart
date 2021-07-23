@@ -26,8 +26,10 @@ abstract class ConstantData {
 abstract class ConstantDBData {
   static const String databaseName = 'data.db';
   static const int databaseVersion = 1;
+
   static const String currencyTableName = 'currency';
   static const String infoTableName = 'info';
+  static const String historyTableName = 'history';
 
   static const String unknown = '???';
 
@@ -43,4 +45,11 @@ abstract class ConstantDBData {
 
   // Info keys
   static const String lastTimeUpdated = 'lastTimeUpdated';
+
+  // historyTable
+  static const String time = 'time';
+  static const String iso1 = 'iso1';
+  static const String iso2 = 'iso2';
+  static const String value1 = 'value1';
+  static const String value2 = 'value2';
 }

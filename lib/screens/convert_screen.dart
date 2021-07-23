@@ -1,3 +1,5 @@
+import 'package:currency_converter/bloc/exchange_bloc.dart';
+import 'package:currency_converter/widgets/loading_circle.dart';
 import 'package:flutter/material.dart';
 
 import '../widgets/loading_label.dart';
@@ -142,41 +144,43 @@ class ConvertScreen extends StatelessWidget {
                   flex: 1,
                 ),
                 StreamBuilder(
-                    stream: InfoBloc.info,
-                    initialData: InfoInitState(),
-                    builder: (context, snapshot) {
-                      if (snapshot.data is InfoInitState) {
-                        InfoBloc.getLastDate();
-                        return RawMaterialButton(
-                          splashColor:
-                              Theme.of(context).disabledColor.withOpacity(0.25),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              const Icon(
-                                Icons.language_outlined,
-                                color: Colors.transparent,
-                                size: 20.0,
-                              ),
-                              const SizedBox(width: 5.0),
-                              Text(
-                                '',
-                                style: Theme.of(context).textTheme.subtitle1,
-                              ),
-                            ],
-                          ),
-                          onPressed: () {},
-                        );
-                      } else if (snapshot.data is InfoLoadingState) {
-                        return const LoadingLabel();
-                      } else if (snapshot.data is InfoDataState) {
-                        InfoDataState state = snapshot.data as InfoDataState;
+                  stream: InfoBloc.info,
+                  initialData: InfoInitState(),
+                  builder: (context, snapshot) {
+                    if (snapshot.data is InfoInitState) {
+                      InfoBloc.getLastDate();
+                      return RawMaterialButton(
+                        splashColor:
+                            Theme.of(context).disabledColor.withOpacity(0.25),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Icon(
+                              Icons.language_outlined,
+                              color: Colors.transparent,
+                              size: 20.0,
+                            ),
+                            const SizedBox(width: 5.0),
+                            Text(
+                              '',
+                              style: Theme.of(context).textTheme.subtitle1,
+                            ),
+                          ],
+                        ),
+                        onPressed: () {},
+                      );
+                    } else if (snapshot.data is InfoLoadingState) {
+                      return const LoadingLabel();
+                    } else if (snapshot.data is InfoDataState) {
+                      ExchangeBloc.getFirstTwoCurrencies();
+                      InfoDataState state = snapshot.data as InfoDataState;
+                      String updated = state.date;
+                      if (updated != ConstantDBData.unknown) {
                         List<int> date = state.date
                             .split(RegExp('[: .]'))
                             .map<int>((e) => int.parse(e))
                             .toList();
                         DateTime now = DateTime.now();
-                        String updated;
                         if (date[4] != now.year) {
                           String day = date[2].toString();
                           if (day.length < 2) {
@@ -201,79 +205,142 @@ class ConvertScreen extends StatelessWidget {
                           }
                           updated = '$hour:$minute';
                         }
-                        return SizedBox(
-                          height: 24,
-                          child: RawMaterialButton(
-                            splashColor: Theme.of(context)
-                                .disabledColor
-                                .withOpacity(0.25),
+                      }
+                      return SizedBox(
+                        height: 24,
+                        child: RawMaterialButton(
+                          splashColor:
+                              Theme.of(context).disabledColor.withOpacity(0.25),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.language_outlined,
+                                color: Theme.of(context).disabledColor,
+                                size: 20.0,
+                              ),
+                              const SizedBox(width: 5.0),
+                              Text(
+                                'Обновлено: $updated',
+                                style: Theme.of(context).textTheme.subtitle1,
+                              ),
+                            ],
+                          ),
+                          onPressed: () {
+                            if (snapshot.data is! InfoLoadingState) {
+                              CurrencyBloc.updateCurrencies();
+                            }
+                          },
+                        ),
+                      );
+                    } else if (snapshot.data is InfoLoadingErrorState) {
+                      return FutureBuilder(
+                        future: Future.delayed(
+                            const Duration(seconds: 2), () => 'ok'),
+                        builder: (context, snapshot) {
+                          if (snapshot.hasData) {
+                            InfoBloc.getLastDate();
+                          }
+                          return SizedBox(
+                            height: 24,
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Icon(
-                                  Icons.language_outlined,
+                                  Icons.error_outline_outlined,
                                   color: Theme.of(context).disabledColor,
                                   size: 20.0,
                                 ),
                                 const SizedBox(width: 5.0),
                                 Text(
-                                  'Обновлено: $updated',
+                                  'Ошибка',
                                   style: Theme.of(context).textTheme.subtitle1,
                                 ),
                               ],
                             ),
-                            onPressed: () {
-                              if (snapshot.data is! InfoLoadingState) {
-                                CurrencyBloc.updateCurrencies();
-                              }
-                            },
-                          ),
-                        );
-                      } else {
-                        return Container(
-                          color: Colors.red,
-                          height: 10,
-                          width: 100,
-                        );
-                        // return ErrorLabel(
-                        //   error: snapshot.data.error,
-                        //   stackTrace: snapshot.data.stackTrace,
-                        //   onPressed: () {
-                        //     Bloc.bloc.clientBloc.loadAllClients();
-                        //   },
-                        // );
-                      }
-                    }),
+                          );
+                        },
+                      );
+                    } else {
+                      return const SizedBox.shrink();
+                    }
+                  },
+                ),
                 const Spacer(
                   flex: 1,
                 ),
-                CurrencyInputField(
-                  currencyNotifier: currencyNotifier1,
-                  textEditingController: currencyController1,
-                  textNotifier: textNotifier,
-                ),
-                IconButton(
-                  icon: Icon(
-                    Icons.swap_vert_outlined,
-                    color: Theme.of(context).focusColor,
-                    size: 28.0,
-                  ),
-                  splashColor:
-                      Theme.of(context).disabledColor.withOpacity(0.25),
-                  splashRadius: 22.0,
-                  onPressed: () {
-                    final String text = currencyController1.text;
-                    currencyController1.text = currencyController2.text;
-                    currencyController2.text = text;
-                    final currency = currencyNotifier1.value;
-                    currencyNotifier1.value = currencyNotifier2.value;
-                    currencyNotifier2.value = currency;
+                StreamBuilder(
+                  stream: ExchangeBloc.exchange,
+                  initialData: ExchangeInitState(),
+                  builder: (context, snapshot) {
+                    if (snapshot.data is ExchangeInitState) {
+                      return const SizedBox.shrink();
+                    } else if (snapshot.data is ExchangeLoadingState) {
+                      return const SizedBox(
+                        height: 28.0,
+                        width: 28.0,
+                        child: LoadingCircle(),
+                      );
+                    } else if (snapshot.data is ExchangeDataState) {
+                      ExchangeDataState state =
+                          snapshot.data as ExchangeDataState;
+                      if (state.exchanges.leftCurrency == null) {
+                        return SizedBox(
+                          width: double.infinity,
+                          child: Text(
+                            'Нет загруженных данных\nНеобходим интернет',
+                            style: Theme.of(context).textTheme.headline1,
+                            textAlign: TextAlign.center,
+                          ),
+                        );
+                      } else {
+                        currencyNotifier1.value = state.exchanges.leftCurrency!;
+                        currencyNotifier2.value =
+                            state.exchanges.rightCurrency!;
+                        currencyController1.text =
+                            state.exchanges.leftValue?.toString() ?? '';
+                        currencyController2.text =
+                            state.exchanges.rightValue?.toString() ?? '';
+                        return Column(
+                          children: [
+                            CurrencyInputField(
+                              currencyNotifier: currencyNotifier1,
+                              textEditingController: currencyController1,
+                              textNotifier: textNotifier,
+                            ),
+                            IconButton(
+                              icon: Icon(
+                                Icons.swap_vert_outlined,
+                                color: Theme.of(context).focusColor,
+                                size: 28.0,
+                              ),
+                              splashColor: Theme.of(context)
+                                  .disabledColor
+                                  .withOpacity(0.25),
+                              splashRadius: 22.0,
+                              onPressed: () {
+                                final String text = currencyController1.text;
+                                currencyController1.text =
+                                    currencyController2.text;
+                                currencyController2.text = text;
+                                final currency = currencyNotifier1.value;
+                                currencyNotifier1.value =
+                                    currencyNotifier2.value;
+                                currencyNotifier2.value = currency;
+                              },
+                            ),
+                            CurrencyInputField(
+                              currencyNotifier: currencyNotifier2,
+                              textEditingController: currencyController2,
+                              textNotifier: textNotifier,
+                            ),
+                          ],
+                        );
+                      }
+                    } else {
+                      return const SizedBox.shrink();
+                    }
                   },
-                ),
-                CurrencyInputField(
-                  currencyNotifier: currencyNotifier2,
-                  textEditingController: currencyController2,
-                  textNotifier: textNotifier,
                 ),
                 const Spacer(
                   flex: 2,

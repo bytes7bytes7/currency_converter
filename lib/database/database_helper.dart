@@ -3,6 +3,7 @@ import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path_provider/path_provider.dart';
 
+import '../models/exchange.dart';
 import '../models/currency.dart';
 import '../constants.dart';
 
@@ -40,6 +41,15 @@ class DatabaseHelper {
       CREATE TABLE IF NOT EXISTS ${ConstantDBData.infoTableName} (
         ${ConstantDBData.key} TEXT PRIMARY KEY,
         ${ConstantDBData.value} TEXT
+      )
+    ''');
+    await db.execute('''
+      CREATE TABLE IF NOT EXISTS ${ConstantDBData.historyTableName} (
+        ${ConstantDBData.time} TEXT PRIMARY KEY,
+        ${ConstantDBData.iso1} TEXT,
+        ${ConstantDBData.iso2} TEXT,
+        ${ConstantDBData.value1} REAL,
+        ${ConstantDBData.value2} REAL
       )
     ''');
   }
@@ -116,17 +126,6 @@ class DatabaseHelper {
     }
   }
 
-  Future<List<Currency>> getLastTwoCurrencies() async {
-    final db = await database;
-    List<Map<String, dynamic>> data =
-    await db.query(ConstantDBData.currencyTableName);
-    if (data.isNotEmpty) {
-      return data.map((e) => Currency.fromMap(e)).toList();
-    } else {
-      return <Currency>[];
-    }
-  }
-
   Future deleteCurrency(String iso) async {
     final db = await database;
     db.delete(ConstantDBData.currencyTableName,
@@ -178,6 +177,49 @@ class DatabaseHelper {
       return Map<String, dynamic>.from(data.first)['value'];
     } else {
       return ConstantDBData.unknown;
+    }
+  }
+
+  // Exchange methods
+  Future addExchange(Exchange exchange) async {
+    final db = await database;
+    await db.rawInsert(
+      "INSERT INTO ${ConstantDBData.historyTableName} (${ConstantDBData.time}, ${ConstantDBData.iso1}, ${ConstantDBData.iso2}, ${ConstantDBData.value1}, ${ConstantDBData.value2}) VALUES (?,?,?,?,?)",
+      [
+        exchange.time.toString(),
+        exchange.leftCurrency!.iso,
+        exchange.rightCurrency!.iso,
+        exchange.leftValue,
+        exchange.rightValue,
+      ],
+    );
+  }
+
+  Future<Exchange> getLastExchange() async {
+    final db = await database;
+    List<Map<String, dynamic>> data = await db.rawQuery(
+        'SELECT * FROM ${ConstantDBData.historyTableName} ORDER BY ${ConstantDBData.time} DESC LIMIT 1;');
+    if (data.isNotEmpty) {
+      return Exchange.fromMap(data.first);
+    } else {
+      return Exchange();
+    }
+  }
+
+  Future<Exchange> getFirstTwoCurrencies() async {
+    final db = await database;
+    List<Map<String, dynamic>> data = await db.rawQuery(
+        'SELECT * FROM ${ConstantDBData.currencyTableName} ORDER BY ${ConstantDBData.iso} LIMIT 2;');
+    if (data.isNotEmpty) {
+      Exchange exchange = Exchange();
+      exchange.time = DateTime.now();
+      exchange.leftValue=null;
+      exchange.rightValue=null;
+      exchange.leftCurrency = Currency.fromMap(data[0]);
+      exchange.rightCurrency = Currency.fromMap(data[1]);
+      return exchange;
+    } else {
+      return Exchange();
     }
   }
 }

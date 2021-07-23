@@ -29,8 +29,12 @@ abstract class InfoBloc {
     });
   }
 
-  static void singLoading() {
+  static void sinkLoading() {
     _infoStreamController.sink.add(InfoState._infoLoading());
+  }
+
+  static void sinkError() async {
+    _infoStreamController.sink.add(InfoState._infoLoadingError());
   }
 }
 
@@ -43,6 +47,8 @@ class InfoState {
 
   factory InfoState._infoError(Error error, StackTrace stackTrace) =
       InfoErrorState;
+
+  factory InfoState._infoLoadingError() = InfoLoadingErrorState;
 }
 
 class InfoInitState extends InfoState {}
@@ -54,6 +60,9 @@ class InfoErrorState extends InfoState {
 
   final Error error;
   final StackTrace stackTrace;
+}
+
+class InfoLoadingErrorState extends InfoState {
 }
 
 class InfoDataState extends InfoState {

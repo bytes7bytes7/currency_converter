@@ -20,9 +20,13 @@ abstract class CurrencyBloc {
   // }
 
   static void updateCurrencies() async {
-    InfoBloc.singLoading();
+    InfoBloc.sinkLoading();
     _currencyStreamController.sink.add(CurrencyState._currencyLoading());
     CurrencyRepository.updateCurrencies().then((List<Currency> currencyList) {
+      if(currencyList.isEmpty){
+        InfoBloc.sinkError();
+        return;
+      }
       currencyList.sort(
           (a, b) => a.name!.toLowerCase().compareTo(b.name!.toLowerCase()));
       InfoBloc.getLastDate();
@@ -31,6 +35,7 @@ abstract class CurrencyBloc {
             .add(CurrencyState._currencyData(currencyList));
       }
     }).onError((Error error, StackTrace stackTrace) {
+      InfoBloc.sinkError();
       if (!_currencyStreamController.isClosed) {
         _currencyStreamController.sink
             .add(CurrencyState._currencyError(error, stackTrace));
@@ -39,9 +44,13 @@ abstract class CurrencyBloc {
   }
 
   static void loadAllCurrencies() async {
-    InfoBloc.singLoading();
+    InfoBloc.sinkLoading();
     _currencyStreamController.sink.add(CurrencyState._currencyLoading());
     CurrencyRepository.getAllCurrencies().then((List<Currency> currencyList) {
+      if(currencyList.isEmpty){
+        InfoBloc.sinkError();
+        return;
+      }
       currencyList.sort(
           (a, b) => a.name!.toLowerCase().compareTo(b.name!.toLowerCase()));
       InfoBloc.getLastDate();
@@ -50,6 +59,7 @@ abstract class CurrencyBloc {
             .add(CurrencyState._currencyData(currencyList));
       }
     }).onError((Error error, StackTrace stackTrace) {
+      InfoBloc.sinkError();
       if (!_currencyStreamController.isClosed) {
         _currencyStreamController.sink
             .add(CurrencyState._currencyError(error, stackTrace));

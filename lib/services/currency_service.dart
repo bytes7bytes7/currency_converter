@@ -9,7 +9,12 @@ import '../models/currency.dart';
 abstract class CurrencyService {
   static Future<List<Currency>> updateCurrencies() async {
     var url = Uri.parse('https://babki.info/kurs/usd');
-    var response = await http.get(url);
+    http.Response response;
+    try {
+      response = await http.get(url);
+    } catch(error){
+      return <Currency>[];
+    }
     String body = response.body;
     body = body
         .substring(body.indexOf('var Pairs = \'') + 'var Pairs = \''.length);
