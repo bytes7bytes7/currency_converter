@@ -12,7 +12,7 @@ abstract class CurrencyService {
     http.Response response;
     try {
       response = await http.get(url);
-    } catch(error){
+    } catch (error) {
       return <Currency>[];
     }
     String body = response.body;
@@ -40,11 +40,16 @@ abstract class CurrencyService {
           iso: curr['code'],
           rate: double.parse(current),
           country: curr['country'],
+          dayDelta: curr['dayAgo'],
+          weekDelta: curr['weekAgo'],
+          monthDelta: curr['monthAgo'],
+          yearDelta: curr['yearAgo'],
         ),
       );
     }
     DateTime now = DateTime.now();
-    String date = '${now.hour}:${now.minute} ${now.day}.${now.month}.${now.year}';
+    String date =
+        '${now.hour}:${now.minute} ${now.day}.${now.month}.${now.year}';
     await DatabaseHelper.db.updateInfo(ConstantDBData.lastTimeUpdated, date);
     await DatabaseHelper.db.updateAllCurrencies(currencies);
     return currencies;

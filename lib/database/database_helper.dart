@@ -34,7 +34,11 @@ class DatabaseHelper {
         ${ConstantDBData.iso} TEXT PRIMARY KEY,
         ${ConstantDBData.name} TEXT,
         ${ConstantDBData.country} TEXT,
-        ${ConstantDBData.rate} REAL
+        ${ConstantDBData.rate} REAL,
+        ${ConstantDBData.dayDelta} TEXT,
+        ${ConstantDBData.weekDelta} TEXT,
+        ${ConstantDBData.monthDelta} TEXT,
+        ${ConstantDBData.yearDelta} TEXT
       )
     ''');
     await db.execute('''
@@ -81,12 +85,16 @@ class DatabaseHelper {
     final db = await database;
     for (var currency in currencies) {
       await db.rawInsert(
-        "INSERT INTO ${ConstantDBData.currencyTableName} (${ConstantDBData.iso}, ${ConstantDBData.name}, ${ConstantDBData.country}, ${ConstantDBData.rate}) VALUES (?,?,?,?)",
+        "INSERT INTO ${ConstantDBData.currencyTableName} (${ConstantDBData.iso}, ${ConstantDBData.name}, ${ConstantDBData.country}, ${ConstantDBData.rate}, ${ConstantDBData.dayDelta}, ${ConstantDBData.weekDelta}, ${ConstantDBData.monthDelta}, ${ConstantDBData.yearDelta}) VALUES (?,?,?,?,?,?,?,?)",
         [
           currency.iso,
           currency.name,
           currency.country,
           currency.rate,
+          currency.dayDelta,
+          currency.weekDelta,
+          currency.monthDelta,
+          currency.yearDelta,
         ],
       );
     }

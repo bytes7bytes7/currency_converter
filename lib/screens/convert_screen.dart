@@ -172,10 +172,13 @@ class ConvertScreen extends StatelessWidget {
                     } else if (snapshot.data is InfoLoadingState) {
                       return const LoadingLabel();
                     } else if (snapshot.data is InfoDataState) {
+                      // TODO: load 2 currencies when it's the first load
                       ExchangeBloc.getFirstTwoCurrencies();
                       InfoDataState state = snapshot.data as InfoDataState;
                       String updated = state.date;
-                      if (updated != ConstantDBData.unknown) {
+                      if (updated == ConstantDBData.unknown) {
+                        CurrencyBloc.updateCurrencies();
+                      } else {
                         List<int> date = state.date
                             .split(RegExp('[: .]'))
                             .map<int>((e) => int.parse(e))

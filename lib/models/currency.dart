@@ -4,12 +4,20 @@ class Currency {
     this.name,
     this.country,
     this.rate,
+    this.dayDelta,
+    this.weekDelta,
+    this.monthDelta,
+    this.yearDelta,
   });
 
   String? iso;
   String? name;
   String? country;
   double? rate; // USA dollar rate
+  String? dayDelta;
+  String? weekDelta;
+  String? monthDelta;
+  String? yearDelta;
 
   String getFlag() {
     final int firstLetter = iso!.codeUnitAt(0) - 0x41 + 0x1F1E6;
@@ -17,12 +25,16 @@ class Currency {
     return String.fromCharCode(firstLetter) + String.fromCharCode(secondLetter);
   }
 
-  Map<String, dynamic> toMap(){
+  Map<String, dynamic> toMap() {
     return {
-    'iso': iso,
-    'name': name,
-    'country': country,
-    'rate': rate,
+      'iso': iso,
+      'name': name,
+      'country': country,
+      'rate': rate,
+      'dayDelta': dayDelta,
+      'weekDelta': weekDelta,
+      'monthDelta': monthDelta,
+      'yearDelta': yearDelta,
     };
   }
 
@@ -31,5 +43,9 @@ class Currency {
     name = map['name'];
     country = map['country'];
     rate = map['rate'];
+    dayDelta = map['dayDelta'];
+    weekDelta = map['weekDelta'];
+    monthDelta = map['monthDelta'];
+    yearDelta = map['yearDelta'];
   }
 }

@@ -38,6 +38,10 @@ abstract class ConstantDBData {
   static const String name = 'name';
   static const String country = 'country';
   static const String rate = 'rate';
+  static const String dayDelta = 'dayDelta';
+  static const String weekDelta = 'weekDelta';
+  static const String monthDelta = 'monthDelta';
+  static const String yearDelta = 'yearDelta';
 
   //infoTable
   static const String key = 'key';

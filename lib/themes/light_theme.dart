@@ -27,5 +27,10 @@ final ThemeData lightTheme = ThemeData(
       fontWeight: FontWeight.normal,
       color: ConstantColors.focusColor,
     ),
+    bodyText2: TextStyle(
+      fontSize: 20.0,
+      fontWeight: FontWeight.normal,
+      color: ConstantColors.focusColor,
+    ),
   ),
 );

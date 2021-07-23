@@ -34,7 +34,7 @@ class CurrencyInputField extends StatelessWidget {
             Navigator.push(
               context,
               NextPageRoute(
-                nextPage: const CurrencyScreen(),
+                nextPage: CurrencyScreen(),
               ),
             );
           },

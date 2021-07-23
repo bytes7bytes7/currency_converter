@@ -7,7 +7,7 @@ import '../models/currency.dart';
 
 abstract class CurrencyBloc {
   static final StreamController<CurrencyState> _currencyStreamController =
-      StreamController<CurrencyState>();
+      StreamController<CurrencyState>.broadcast();
 
   static Stream<CurrencyState> get currency {
     return _currencyStreamController.stream;
