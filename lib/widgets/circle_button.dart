@@ -20,7 +20,6 @@ class CircleButton extends StatelessWidget {
       height: buttonWidth,
       width: buttonWidth,
       decoration: BoxDecoration(
-        color: Theme.of(context).splashColor,
         shape: BoxShape.circle,
         boxShadow: [
           BoxShadow(
@@ -33,6 +32,7 @@ class CircleButton extends StatelessWidget {
       ),
       child: ClipOval(
         child: Material(
+          color: Theme.of(context).scaffoldBackgroundColor,
           child: InkWell(
             splashColor: Theme.of(context).disabledColor.withOpacity(0.25),
             onTap: () {

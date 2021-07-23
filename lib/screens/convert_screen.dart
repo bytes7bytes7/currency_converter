@@ -3,9 +3,12 @@ import 'package:flutter/material.dart';
 import '../widgets/loading_label.dart';
 import '../widgets/number_panel.dart';
 import '../widgets/currency_input_field.dart';
-import '../models/currency.dart';
 import '../services/amount_text_input_formatter.dart';
-import '../bloc/exchange_bloc.dart';
+import '../services/next_page_route.dart';
+import '../models/currency.dart';
+import '../bloc/info_bloc.dart';
+import '../bloc/currency_bloc.dart';
+import '../constants.dart';
 import 'history_screen.dart';
 import 'settings_screen.dart';
 
@@ -14,22 +17,8 @@ class ConvertScreen extends StatelessWidget {
     Key? key,
   }) : super(key: key);
 
-  final ValueNotifier<Currency> currencyNotifier1 = ValueNotifier(
-    Currency(
-      iso: 'USD',
-      name: 'Доллар США',
-      country: 'США',
-      rate: 1,
-    ),
-  );
-  final ValueNotifier<Currency> currencyNotifier2 = ValueNotifier(
-    Currency(
-      iso: 'RUB',
-      name: 'Российский рубль',
-      country: 'Россия',
-      rate: 74.38,
-    ),
-  );
+  final ValueNotifier<Currency> currencyNotifier1 = ValueNotifier(Currency());
+  final ValueNotifier<Currency> currencyNotifier2 = ValueNotifier(Currency());
   final TextEditingController currencyController1 = TextEditingController();
   final TextEditingController currencyController2 =
       TextEditingController(text: '0');
@@ -38,6 +27,10 @@ class ConvertScreen extends StatelessWidget {
   final AmountTextInputFormatter _formatter = AmountTextInputFormatter();
 
   void changeValue(String action) {
+    if (currencyNotifier1.value.iso == null ||
+        currencyNotifier2.value.iso == null) {
+      return;
+    }
     if (action == 'erase') {
       if (textNotifier.value.selection.end != 0 &&
           textNotifier.value.text.isNotEmpty) {
@@ -149,42 +142,71 @@ class ConvertScreen extends StatelessWidget {
                   flex: 1,
                 ),
                 StreamBuilder(
-                    stream: ExchangeBloc.exchange,
-                    initialData: ExchangeInitState(),
+                    stream: InfoBloc.info,
+                    initialData: InfoInitState(),
                     builder: (context, snapshot) {
-                      if (snapshot.data is ExchangeInitState) {
-                        ExchangeBloc.updateExchanges();
+                      if (snapshot.data is InfoInitState) {
+                        InfoBloc.getLastDate();
                         return RawMaterialButton(
                           splashColor:
                               Theme.of(context).disabledColor.withOpacity(0.25),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Icon(
+                              const Icon(
                                 Icons.language_outlined,
-                                color: Theme.of(context).disabledColor,
+                                color: Colors.transparent,
                                 size: 20.0,
                               ),
                               const SizedBox(width: 5.0),
                               Text(
-                                'Обновлено 12:51',
+                                '',
                                 style: Theme.of(context).textTheme.subtitle1,
                               ),
                             ],
                           ),
-                          onPressed: () {
-                            ExchangeBloc.updateExchanges();
-                          },
+                          onPressed: () {},
                         );
-                      } else if (snapshot.data is ExchangeLoadingState) {
+                      } else if (snapshot.data is InfoLoadingState) {
                         return const LoadingLabel();
-                      } else if (snapshot.data is ExchangeDataState) {
-                        ExchangeDataState state = snapshot.data as ExchangeDataState;
+                      } else if (snapshot.data is InfoDataState) {
+                        InfoDataState state = snapshot.data as InfoDataState;
+                        List<int> date = state.date
+                            .split(RegExp('[: .]'))
+                            .map<int>((e) => int.parse(e))
+                            .toList();
+                        DateTime now = DateTime.now();
+                        String updated;
+                        if (date[4] != now.year) {
+                          String day = date[2].toString();
+                          if (day.length < 2) {
+                            day = '0' + day;
+                          }
+                          String month = date[3].toString();
+                          if (month.length < 2) {
+                            month = '0' + month;
+                          }
+                          updated = '$day.$month.${date[4]}';
+                        } else if (date[3] != now.month || date[2] != now.day) {
+                          updated =
+                              '${ConstantData.month[date[3]]}, ${date[2]}';
+                        } else {
+                          String hour = date[0].toString();
+                          if (hour.length < 2) {
+                            hour = '0' + hour;
+                          }
+                          String minute = date[1].toString();
+                          if (minute.length < 2) {
+                            minute = '0' + minute;
+                          }
+                          updated = '$hour:$minute';
+                        }
                         return SizedBox(
                           height: 24,
                           child: RawMaterialButton(
-                            splashColor:
-                                Theme.of(context).disabledColor.withOpacity(0.25),
+                            splashColor: Theme.of(context)
+                                .disabledColor
+                                .withOpacity(0.25),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
@@ -195,13 +217,15 @@ class ConvertScreen extends StatelessWidget {
                                 ),
                                 const SizedBox(width: 5.0),
                                 Text(
-                                  'Обновлено: ${state.date}',
+                                  'Обновлено: $updated',
                                   style: Theme.of(context).textTheme.subtitle1,
                                 ),
                               ],
                             ),
                             onPressed: () {
-                              ExchangeBloc.updateExchanges();
+                              if (snapshot.data is! InfoLoadingState) {
+                                CurrencyBloc.updateCurrencies();
+                              }
                             },
                           ),
                         );
@@ -292,9 +316,10 @@ class _AppBar extends StatelessWidget implements PreferredSizeWidget {
         splashColor: Theme.of(context).disabledColor.withOpacity(0.25),
         splashRadius: 22.0,
         onPressed: () {
-          Navigator.of(context).push(
-            MaterialPageRoute(
-              builder: (context) => const SettingsScreen(),
+          Navigator.push(
+            context,
+            NextPageRoute(
+              nextPage: const SettingsScreen(),
             ),
           );
         },
@@ -314,9 +339,10 @@ class _AppBar extends StatelessWidget implements PreferredSizeWidget {
           splashColor: Theme.of(context).disabledColor.withOpacity(0.25),
           splashRadius: 22.0,
           onPressed: () {
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (context) => const HistoryScreen(),
+            Navigator.push(
+              context,
+              NextPageRoute(
+                nextPage: const HistoryScreen(),
               ),
             );
           },

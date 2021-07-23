@@ -116,6 +116,17 @@ class DatabaseHelper {
     }
   }
 
+  Future<List<Currency>> getLastTwoCurrencies() async {
+    final db = await database;
+    List<Map<String, dynamic>> data =
+    await db.query(ConstantDBData.currencyTableName);
+    if (data.isNotEmpty) {
+      return data.map((e) => Currency.fromMap(e)).toList();
+    } else {
+      return <Currency>[];
+    }
+  }
+
   Future deleteCurrency(String iso) async {
     final db = await database;
     db.delete(ConstantDBData.currencyTableName,

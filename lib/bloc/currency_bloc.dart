@@ -1,0 +1,88 @@
+import 'dart:async';
+
+import 'package:currency_converter/bloc/info_bloc.dart';
+
+import '../repositories/currency_repository.dart';
+import '../models/currency.dart';
+
+abstract class CurrencyBloc {
+  static final StreamController<CurrencyState> _currencyStreamController =
+      StreamController<CurrencyState>();
+
+  static Stream<CurrencyState> get currency {
+    return _currencyStreamController.stream;
+  }
+
+  // void dispose() {
+  //   if(!_currencyStreamController.isClosed) {
+  //     _currencyStreamController.close();
+  //   }
+  // }
+
+  static void updateCurrencies() async {
+    InfoBloc.singLoading();
+    _currencyStreamController.sink.add(CurrencyState._currencyLoading());
+    CurrencyRepository.updateCurrencies().then((List<Currency> currencyList) {
+      currencyList.sort(
+          (a, b) => a.name!.toLowerCase().compareTo(b.name!.toLowerCase()));
+      InfoBloc.getLastDate();
+      if (!_currencyStreamController.isClosed) {
+        _currencyStreamController.sink
+            .add(CurrencyState._currencyData(currencyList));
+      }
+    }).onError((Error error, StackTrace stackTrace) {
+      if (!_currencyStreamController.isClosed) {
+        _currencyStreamController.sink
+            .add(CurrencyState._currencyError(error, stackTrace));
+      }
+    });
+  }
+
+  static void loadAllCurrencies() async {
+    InfoBloc.singLoading();
+    _currencyStreamController.sink.add(CurrencyState._currencyLoading());
+    CurrencyRepository.getAllCurrencies().then((List<Currency> currencyList) {
+      currencyList.sort(
+          (a, b) => a.name!.toLowerCase().compareTo(b.name!.toLowerCase()));
+      InfoBloc.getLastDate();
+      if (!_currencyStreamController.isClosed) {
+        _currencyStreamController.sink
+            .add(CurrencyState._currencyData(currencyList));
+      }
+    }).onError((Error error, StackTrace stackTrace) {
+      if (!_currencyStreamController.isClosed) {
+        _currencyStreamController.sink
+            .add(CurrencyState._currencyError(error, stackTrace));
+      }
+    });
+  }
+}
+
+class CurrencyState {
+  CurrencyState();
+
+  factory CurrencyState._currencyData(List<Currency> currencies) =
+      CurrencyDataState;
+
+  factory CurrencyState._currencyLoading() = CurrencyLoadingState;
+
+  factory CurrencyState._currencyError(Error error, StackTrace stackTrace) =
+      CurrencyErrorState;
+}
+
+class CurrencyInitState extends CurrencyState {}
+
+class CurrencyLoadingState extends CurrencyState {}
+
+class CurrencyErrorState extends CurrencyState {
+  CurrencyErrorState(this.error, this.stackTrace);
+
+  final Error error;
+  final StackTrace stackTrace;
+}
+
+class CurrencyDataState extends CurrencyState {
+  CurrencyDataState(this.currencies);
+
+  final List<Currency> currencies;
+}

@@ -6,7 +6,6 @@ final ThemeData lightTheme = ThemeData(
   scaffoldBackgroundColor: ConstantColors.scaffoldBackgroundColor,
   focusColor: ConstantColors.focusColor,
   disabledColor: ConstantColors.disabledColor,
-  splashColor: ConstantColors.splashColor,
   textTheme: const TextTheme(
     headline1: TextStyle(
       fontSize: 24.0,

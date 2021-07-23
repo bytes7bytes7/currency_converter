@@ -6,9 +6,8 @@ import 'package:http/http.dart' as http;
 
 import '../models/currency.dart';
 
-abstract class ExchangeService {
-  static Future<List<Currency>> updateExchanges() async {
-    await DatabaseHelper.db.getAllCurrencies();
+abstract class CurrencyService {
+  static Future<List<Currency>> updateCurrencies() async {
     var url = Uri.parse('https://babki.info/kurs/usd');
     var response = await http.get(url);
     String body = response.body;
@@ -40,7 +39,7 @@ abstract class ExchangeService {
       );
     }
     DateTime now = DateTime.now();
-    String date = '${ConstantData.month[now.month]}, ${now.day}';
+    String date = '${now.hour}:${now.minute} ${now.day}.${now.month}.${now.year}';
     await DatabaseHelper.db.updateInfo(ConstantDBData.lastTimeUpdated, date);
     await DatabaseHelper.db.updateAllCurrencies(currencies);
     return currencies;
