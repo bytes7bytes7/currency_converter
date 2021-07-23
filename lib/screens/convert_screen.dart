@@ -231,6 +231,7 @@ class ConvertScreen extends StatelessWidget {
                           ),
                           onPressed: () {
                             if (snapshot.data is! InfoLoadingState) {
+                              // TODO: need to show "updating..."
                               CurrencyBloc.updateCurrencies();
                             }
                           },
@@ -326,10 +327,6 @@ class ConvertScreen extends StatelessWidget {
                                 currencyController1.text =
                                     currencyController2.text;
                                 currencyController2.text = text;
-                                final currency = currencyNotifier1.value;
-                                currencyNotifier1.value =
-                                    currencyNotifier2.value;
-                                currencyNotifier2.value = currency;
                               },
                             ),
                             CurrencyInputField(

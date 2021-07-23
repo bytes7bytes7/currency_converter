@@ -34,13 +34,15 @@ class CurrencyInputField extends StatelessWidget {
             Navigator.push(
               context,
               NextPageRoute(
-                nextPage: CurrencyScreen(),
+                nextPage: CurrencyScreen(
+                  currencyNotifier: currencyNotifier,
+                ),
               ),
             );
           },
           splashColor: Theme.of(context).disabledColor,
           child: SizedBox(
-            width: 100,
+            width: 120,
             height: 40,
             child: ValueListenableBuilder(
                 valueListenable: currencyNotifier,

@@ -8,8 +8,10 @@ import '../bloc/currency_bloc.dart';
 class CurrencyScreen extends StatelessWidget {
   CurrencyScreen({
     Key? key,
+    required this.currencyNotifier,
   }) : super(key: key);
 
+  final ValueNotifier<Currency> currencyNotifier;
   final ValueNotifier<Offset?> tapPosition = ValueNotifier(const Offset(0, 0));
 
   void _showPopupMenu(BuildContext context, Currency currency) async {
@@ -101,116 +103,131 @@ class CurrencyScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: const _AppBar(),
-      body: SafeArea(
-        child: Center(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 30.0),
-            child: StreamBuilder(
-                stream: CurrencyBloc.currency,
-                initialData: CurrencyInitState(),
-                builder: (context, snapshot) {
-                  if (snapshot.data is CurrencyInitState) {
-                    CurrencyBloc.loadAllCurrencies();
-                    return const SizedBox.shrink();
-                  } else if (snapshot.data is CurrencyLoadingState) {
-                    return const SizedBox(
-                      height: 50.0,
-                      width: 50.0,
-                      child: LoadingCircle(),
-                    );
-                  } else if (snapshot.data is CurrencyDataState) {
-                    CurrencyDataState state =
-                        snapshot.data as CurrencyDataState;
-                    return Column(
-                      children: [
-                        // TODO: complete
-                        const SearchBar(),
-                        Expanded(
-                          child: ListView.separated(
-                            itemCount: state.currencies.length,
-                            itemBuilder: (context, index) {
-                              return SizedBox(
-                                height: 80.0,
-                                width: double.infinity,
-                                child: Row(
-                                  children: [
-                                    SizedBox(
-                                      width: 40,
-                                      height: 40,
-                                      child: RichText(
-                                        textAlign: TextAlign.center,
-                                        text: TextSpan(
-                                          children: <TextSpan>[
-                                            TextSpan(
-                                              text:
-                                                  state.currencies[index].iso !=
+    return GestureDetector(
+      behavior: HitTestBehavior.translucent,
+      onTap: () {
+        FocusScope.of(context).requestFocus(FocusNode());
+      },
+      child: Scaffold(
+        appBar: const _AppBar(),
+        body: SafeArea(
+          child: Center(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 30.0),
+              child: StreamBuilder(
+                  stream: CurrencyBloc.currency,
+                  initialData: CurrencyInitState(),
+                  builder: (context, snapshot) {
+                    if (snapshot.data is CurrencyInitState) {
+                      CurrencyBloc.loadAllCurrencies();
+                      return const SizedBox.shrink();
+                    } else if (snapshot.data is CurrencyLoadingState) {
+                      return const SizedBox(
+                        height: 50.0,
+                        width: 50.0,
+                        child: LoadingCircle(),
+                      );
+                    } else if (snapshot.data is CurrencyDataState) {
+                      CurrencyDataState state =
+                          snapshot.data as CurrencyDataState;
+                      return Column(
+                        children: [
+                          // TODO: complete
+                          const SearchBar(),
+                          Expanded(
+                            child: ListView.separated(
+                              physics: const BouncingScrollPhysics(),
+                              itemCount: state.currencies.length,
+                              itemBuilder: (context, index) {
+                                return RawMaterialButton(
+                                  padding: const EdgeInsets.all(0),
+                                  onPressed: () {
+                                    currencyNotifier.value = state.currencies[index];
+                                    Navigator.pop(context);
+                                  },
+                                  child: SizedBox(
+                                    height: 80.0,
+                                    width: double.infinity,
+                                    child: Row(
+                                      children: [
+                                        SizedBox(
+                                          width: 40,
+                                          height: 40,
+                                          child: RichText(
+                                            textAlign: TextAlign.center,
+                                            text: TextSpan(
+                                              children: <TextSpan>[
+                                                TextSpan(
+                                                  text: state.currencies[index]
+                                                              .iso !=
                                                           null
                                                       ? state.currencies[index]
                                                           .getFlag()
                                                       : '',
-                                              style: const TextStyle(
-                                                fontSize: 35,
-                                              ),
+                                                  style: const TextStyle(
+                                                    fontSize: 35,
+                                                  ),
+                                                ),
+                                              ],
                                             ),
-                                          ],
+                                          ),
                                         ),
-                                      ),
+                                        const SizedBox(width: 5),
+                                        Text(
+                                          state.currencies[index].iso ?? '',
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .subtitle2,
+                                        ),
+                                        const SizedBox(width: 10),
+                                        Expanded(
+                                          child: Text(
+                                            state.currencies[index].name ?? '',
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .bodyText2,
+                                          ),
+                                        ),
+                                        GestureDetector(
+                                          child: Icon(
+                                            Icons.info_outline,
+                                            color: Theme.of(context).focusColor,
+                                            size: 28.0,
+                                          ),
+                                          onTapDown: (TapDownDetails details) {
+                                            tapPosition.value =
+                                                details.globalPosition;
+                                          },
+                                          onTapUp: (TapUpDetails details) {
+                                            _showPopupMenu(
+                                              context,
+                                              state.currencies[index],
+                                            );
+                                          },
+                                        ),
+                                      ],
                                     ),
-                                    const SizedBox(width: 5),
-                                    Text(
-                                      state.currencies[index].iso ?? '',
-                                      style:
-                                          Theme.of(context).textTheme.subtitle2,
-                                    ),
-                                    const SizedBox(width: 10),
-                                    Expanded(
-                                      child: Text(
-                                        state.currencies[index].name ?? '',
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .bodyText2,
-                                      ),
-                                    ),
-                                    GestureDetector(
-                                      child: Icon(
-                                        Icons.info_outline,
-                                        color: Theme.of(context).focusColor,
-                                        size: 28.0,
-                                      ),
-                                      onTapDown: (TapDownDetails details) {
-                                        tapPosition.value =
-                                            details.globalPosition;
-                                      },
-                                      onTapUp: (TapUpDetails details) {
-                                        _showPopupMenu(
-                                          context,
-                                          state.currencies[index],
-                                        );
-                                      },
-                                    ),
-                                  ],
-                                ),
-                              );
-                            },
-                            separatorBuilder: (context, index) {
-                              return Container(
-                                height: 1.0,
-                                width: double.infinity,
-                                color: Theme.of(context)
-                                    .disabledColor
-                                    .withOpacity(0.25),
-                              );
-                            },
+                                  ),
+                                );
+                              },
+                              separatorBuilder: (context, index) {
+                                return Container(
+                                  height: 1.0,
+                                  width: double.infinity,
+                                  color: Theme.of(context)
+                                      .disabledColor
+                                      .withOpacity(0.25),
+                                );
+                              },
+                            ),
                           ),
-                        ),
-                      ],
-                    );
-                  } else {
-                    return const SizedBox.shrink();
-                  }
-                }),
+                        ],
+                      );
+                    } else {
+                      return const SizedBox.shrink();
+                    }
+                  }),
+            ),
           ),
         ),
       ),
