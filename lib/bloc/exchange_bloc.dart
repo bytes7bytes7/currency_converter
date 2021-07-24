@@ -59,12 +59,8 @@ abstract class ExchangeBloc {
     });
   }
 
-  static void sinkLoading() {
-    _exchangeStreamController.sink.add(ExchangeState._exchangeLoading());
-  }
-
-  static void sinkError() async {
-    _exchangeStreamController.sink.add(ExchangeState._exchangeLoadingError());
+  static void updateCalculation(){
+    _exchangeStreamController.sink.add(ExchangeState._exchangeUpdateCalculation());
   }
 }
 
@@ -78,7 +74,7 @@ class ExchangeState {
   factory ExchangeState._exchangeError(Error error, StackTrace stackTrace) =
       ExchangeErrorState;
 
-  factory ExchangeState._exchangeLoadingError() = ExchangeLoadingErrorState;
+  factory ExchangeState._exchangeUpdateCalculation() = ExchangeUpdateCalculationState;
 }
 
 class ExchangeInitState extends ExchangeState {}
@@ -92,7 +88,7 @@ class ExchangeErrorState extends ExchangeState {
   final StackTrace stackTrace;
 }
 
-class ExchangeLoadingErrorState extends ExchangeState {}
+class ExchangeUpdateCalculationState extends ExchangeState {}
 
 class ExchangeDataState extends ExchangeState {
   ExchangeDataState(this.exchanges);

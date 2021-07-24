@@ -24,8 +24,6 @@ class ConvertScreen extends StatelessWidget {
   final TextEditingController currencyController1 = TextEditingController();
   final TextEditingController currencyController2 =
       TextEditingController(text: '0');
-  final ValueNotifier<TextEditingController> textNotifier =
-      ValueNotifier(TextEditingController());
   final AmountTextInputFormatter _formatter = AmountTextInputFormatter();
 
   void changeValue(String action) {
@@ -34,20 +32,20 @@ class ConvertScreen extends StatelessWidget {
       return;
     }
     if (action == 'erase') {
-      if (textNotifier.value.selection.end != 0 &&
-          textNotifier.value.text.isNotEmpty) {
-        final oldValue = textNotifier.value.value;
-        final tmp = textNotifier.value.text.split('');
-        if (textNotifier.value.selection.end == -1) {
-          tmp.removeAt(textNotifier.value.text.length - 1);
+      if (currencyController1.value.selection.end != 0 &&
+          currencyController1.value.text.isNotEmpty) {
+        final oldValue = currencyController1.value;
+        final tmp = currencyController1.value.text.split('');
+        if (currencyController1.value.selection.end == -1) {
+          tmp.removeAt(currencyController1.value.text.length - 1);
         } else {
-          tmp.removeAt(textNotifier.value.selection.end - 1);
+          tmp.removeAt(currencyController1.value.selection.end - 1);
         }
         int offset;
-        if (textNotifier.value.selection.end == -1) {
+        if (currencyController1.value.selection.end == -1) {
           offset = -1;
         } else {
-          offset = textNotifier.value.selection.end - 1;
+          offset = currencyController1.value.selection.end - 1;
         }
         TextEditingValue newValue = TextEditingValue(
           text: tmp.join(''),
@@ -56,22 +54,22 @@ class ConvertScreen extends StatelessWidget {
             extentOffset: offset,
           ),
         );
-        textNotifier.value.value =
+        currencyController1.value =
             _formatter.formatEditUpdate(oldValue, newValue);
       }
     } else {
-      TextEditingValue oldValue = textNotifier.value.value;
-      final tmp = textNotifier.value.text.split('');
-      if (textNotifier.value.selection.end == -1) {
-        tmp.insert(textNotifier.value.text.length, action);
+      TextEditingValue oldValue = currencyController1.value;
+      final tmp = currencyController1.text.split('');
+      if (currencyController1.selection.end == -1) {
+        tmp.insert(currencyController1.text.length, action);
       } else {
-        tmp.insert(textNotifier.value.selection.end, action);
+        tmp.insert(currencyController1.selection.end, action);
       }
       int offset;
-      if (textNotifier.value.selection.end == -1) {
+      if (currencyController1.selection.end == -1) {
         offset = -1;
       } else {
-        offset = textNotifier.value.selection.end + 1;
+        offset = currencyController1.selection.end + 1;
       }
       TextEditingValue newValue = TextEditingValue(
         text: tmp.join(''),
@@ -80,10 +78,10 @@ class ConvertScreen extends StatelessWidget {
           extentOffset: offset,
         ),
       );
-      textNotifier.value.value =
+      currencyController1.value =
           _formatter.formatEditUpdate(oldValue, newValue);
     }
-    if (textNotifier.value == currencyController1) {
+    if (currencyController1 == currencyController1) {
       final TextEditingValue oldValue = TextEditingValue(
         text: currencyController2.text,
       );
@@ -93,9 +91,16 @@ class ConvertScreen extends StatelessWidget {
         double v = (double.parse(currText1) *
             currencyNotifier2.value.rate! /
             currencyNotifier1.value.rate!);
-        final TextEditingValue newValue = TextEditingValue(
-          text: v.toStringAsFixed(2),
-        );
+        TextEditingValue newValue;
+        if (v.toInt() == 0) {
+          newValue = TextEditingValue(
+            text: v.toString().replaceAll('.', ','),
+          );
+        } else {
+          newValue = TextEditingValue(
+            text: v.toStringAsFixed(2).replaceAll('.', ','),
+          );
+        }
         currencyController2.text =
             _formatter.formatEditUpdate(oldValue, newValue).text;
       } else {
@@ -112,7 +117,7 @@ class ConvertScreen extends StatelessWidget {
             currencyNotifier1.value.rate! /
             currencyNotifier2.value.rate!;
         final TextEditingValue newValue = TextEditingValue(
-          text: v.toStringAsFixed(2),
+          text: v.toStringAsFixed(2).replaceAll('.', ','),
         );
         currencyController1.text =
             _formatter.formatEditUpdate(oldValue, newValue).text;
@@ -125,12 +130,11 @@ class ConvertScreen extends StatelessWidget {
   void clearField() {
     currencyController1.text = '0';
     currencyController2.text = '0';
-    textNotifier.value.text = '';
+    currencyController1.text = '';
   }
 
   @override
   Widget build(BuildContext context) {
-    textNotifier.value = currencyController1;
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: const _AppBar(),
@@ -173,7 +177,11 @@ class ConvertScreen extends StatelessWidget {
                       return const LoadingLabel();
                     } else if (snapshot.data is InfoDataState) {
                       // TODO: load 2 currencies when it's the first load
-                      ExchangeBloc.getFirstTwoCurrencies();
+                      if(currencyNotifier1.value.iso == null || currencyNotifier2.value.iso == null){
+                        ExchangeBloc.getFirstTwoCurrencies();
+                      }else{
+                        ExchangeBloc.updateCalculation();
+                      }
                       InfoDataState state = snapshot.data as InfoDataState;
                       String updated = state.date;
                       if (updated == ConstantDBData.unknown) {
@@ -285,58 +293,62 @@ class ConvertScreen extends StatelessWidget {
                         width: 28.0,
                         child: LoadingCircle(),
                       );
-                    } else if (snapshot.data is ExchangeDataState) {
-                      ExchangeDataState state =
-                          snapshot.data as ExchangeDataState;
-                      if (state.exchanges.leftCurrency == null) {
-                        return SizedBox(
-                          width: double.infinity,
-                          child: Text(
-                            'Нет загруженных данных\nНеобходим интернет',
-                            style: Theme.of(context).textTheme.headline1,
-                            textAlign: TextAlign.center,
-                          ),
-                        );
-                      } else {
-                        currencyNotifier1.value = state.exchanges.leftCurrency!;
-                        currencyNotifier2.value =
-                            state.exchanges.rightCurrency!;
-                        currencyController1.text =
-                            state.exchanges.leftValue?.toString() ?? '';
-                        currencyController2.text =
-                            state.exchanges.rightValue?.toString() ?? '';
-                        return Column(
-                          children: [
-                            CurrencyInputField(
-                              currencyNotifier: currencyNotifier1,
-                              textEditingController: currencyController1,
-                              textNotifier: textNotifier,
+                    } else if (snapshot.data is ExchangeDataState ||
+                        snapshot.data is ExchangeUpdateCalculationState) {
+                      if (snapshot.data is ExchangeDataState) {
+                        ExchangeDataState state =
+                            snapshot.data as ExchangeDataState;
+                        if (state.exchanges.leftCurrency == null) {
+                          return SizedBox(
+                            width: double.infinity,
+                            child: Text(
+                              'Нет загруженных данных\nНеобходим интернет',
+                              style: Theme.of(context).textTheme.headline1,
+                              textAlign: TextAlign.center,
                             ),
-                            IconButton(
-                              icon: Icon(
-                                Icons.swap_vert_outlined,
-                                color: Theme.of(context).focusColor,
-                                size: 28.0,
-                              ),
-                              splashColor: Theme.of(context)
-                                  .disabledColor
-                                  .withOpacity(0.25),
-                              splashRadius: 22.0,
-                              onPressed: () {
-                                final String text = currencyController1.text;
-                                currencyController1.text =
-                                    currencyController2.text;
-                                currencyController2.text = text;
-                              },
-                            ),
-                            CurrencyInputField(
-                              currencyNotifier: currencyNotifier2,
-                              textEditingController: currencyController2,
-                              textNotifier: textNotifier,
-                            ),
-                          ],
-                        );
+                          );
+                        } else {
+                          currencyNotifier1.value =
+                              state.exchanges.leftCurrency!;
+                          currencyNotifier2.value =
+                              state.exchanges.rightCurrency!;
+                          currencyController1.text =
+                              state.exchanges.leftValue?.toString() ?? '';
+                          currencyController2.text =
+                              state.exchanges.rightValue?.toString() ?? '';
+                        }
+                      }else{
+                        changeValue('');
                       }
+                      return Column(
+                        children: [
+                          CurrencyInputField(
+                            currencyNotifier: currencyNotifier1,
+                            textEditingController: currencyController1,
+                          ),
+                          IconButton(
+                            icon: Icon(
+                              Icons.swap_vert_outlined,
+                              color: Theme.of(context).focusColor,
+                              size: 28.0,
+                            ),
+                            splashColor: Theme.of(context)
+                                .disabledColor
+                                .withOpacity(0.25),
+                            splashRadius: 22.0,
+                            onPressed: () {
+                              final Currency curr = currencyNotifier1.value;
+                              currencyNotifier1.value = currencyNotifier2.value;
+                              currencyNotifier2.value = curr;
+                            },
+                          ),
+                          CurrencyInputField(
+                            enabled: false,
+                            currencyNotifier: currencyNotifier2,
+                            textEditingController: currencyController2,
+                          ),
+                        ],
+                      );
                     } else {
                       return const SizedBox.shrink();
                     }
@@ -346,7 +358,6 @@ class ConvertScreen extends StatelessWidget {
                   flex: 2,
                 ),
                 NumberPanel(
-                  textNotifier: textNotifier,
                   onTap: changeValue,
                   onLongPress: clearField,
                 ),

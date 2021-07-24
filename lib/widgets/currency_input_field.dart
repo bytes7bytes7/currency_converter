@@ -7,28 +7,36 @@ import '../models/currency.dart';
 class CurrencyInputField extends StatelessWidget {
   const CurrencyInputField({
     Key? key,
+    this.enabled = true,
     required this.currencyNotifier,
     required this.textEditingController,
-    required this.textNotifier,
   }) : super(key: key);
 
+  final bool enabled;
   final ValueNotifier<Currency> currencyNotifier;
   final TextEditingController textEditingController;
-  final ValueNotifier<TextEditingController> textNotifier;
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
       controller: textEditingController,
       readOnly: true,
-      showCursor: true,
+      showCursor: enabled,
       autofocus: true,
-      onTap: () {
-        textNotifier.value = textEditingController;
-      },
       style: Theme.of(context).textTheme.bodyText1,
       textAlign: TextAlign.end,
+      scrollPhysics: const BouncingScrollPhysics(),
       decoration: InputDecoration(
+        enabledBorder: UnderlineInputBorder(
+          borderSide: BorderSide(
+            color: Theme.of(context).disabledColor.withOpacity(0.25),
+          ),
+        ),
+        focusedBorder: UnderlineInputBorder(
+          borderSide: BorderSide(
+            color: Theme.of(context).disabledColor.withOpacity(0.25),
+          ),
+        ),
         prefixIcon: RawMaterialButton(
           onPressed: () {
             Navigator.push(

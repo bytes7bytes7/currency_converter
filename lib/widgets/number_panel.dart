@@ -5,12 +5,10 @@ import 'circle_button.dart';
 class NumberPanel extends StatelessWidget {
   const NumberPanel({
     Key? key,
-    required this.textNotifier,
     required this.onTap,
     required this.onLongPress,
   }) : super(key: key);
 
-  final ValueNotifier<TextEditingController> textNotifier;
   final Function onTap;
   final Function onLongPress;
 

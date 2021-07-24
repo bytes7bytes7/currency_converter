@@ -1,3 +1,4 @@
+import 'package:currency_converter/bloc/exchange_bloc.dart';
 import 'package:flutter/material.dart';
 
 import '../widgets/search_bar.dart';
@@ -151,6 +152,7 @@ class CurrencyScreen extends StatelessWidget {
                                     onPressed: () {
                                       currencyNotifier.value =
                                           state.currencies[index];
+                                      ExchangeBloc.updateCalculation();
                                       Navigator.pop(context);
                                     },
                                     child: SizedBox(
