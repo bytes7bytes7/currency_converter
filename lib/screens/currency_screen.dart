@@ -41,7 +41,7 @@ class CurrencyScreen extends StatelessWidget {
           enabled: false,
           height: 30,
           child: Text(
-            'Курс \$: ${currency.rate}',
+            'Курс \$: ${currency.rate.toString().replaceAll('.', ',')}',
             style: Theme.of(context)
                 .textTheme
                 .subtitle1!
@@ -139,73 +139,93 @@ class CurrencyScreen extends StatelessWidget {
                               physics: const BouncingScrollPhysics(),
                               itemCount: state.currencies.length,
                               itemBuilder: (context, index) {
-                                return RawMaterialButton(
-                                  padding: const EdgeInsets.all(0),
-                                  onPressed: () {
-                                    currencyNotifier.value = state.currencies[index];
-                                    Navigator.pop(context);
-                                  },
-                                  child: SizedBox(
-                                    height: 80.0,
-                                    width: double.infinity,
-                                    child: Row(
-                                      children: [
-                                        SizedBox(
-                                          width: 40,
-                                          height: 40,
-                                          child: RichText(
-                                            textAlign: TextAlign.center,
-                                            text: TextSpan(
-                                              children: <TextSpan>[
-                                                TextSpan(
-                                                  text: state.currencies[index]
-                                                              .iso !=
-                                                          null
-                                                      ? state.currencies[index]
-                                                          .getFlag()
-                                                      : '',
-                                                  style: const TextStyle(
-                                                    fontSize: 35,
+                                String flag =
+                                    state.currencies[index].iso != null
+                                        ? state.currencies[index].getFlag()
+                                        : '';
+                                return Container(
+                                  margin:
+                                      const EdgeInsets.symmetric(vertical: 10),
+                                  child: RawMaterialButton(
+                                    padding: const EdgeInsets.all(0),
+                                    onPressed: () {
+                                      currencyNotifier.value =
+                                          state.currencies[index];
+                                      Navigator.pop(context);
+                                    },
+                                    child: SizedBox(
+                                      height: 60.0,
+                                      width: double.infinity,
+                                      child: Row(
+                                        children: [
+                                          SizedBox(
+                                            width: 40,
+                                            height: 40,
+                                            child: (flag.isNotEmpty &&
+                                                    flag.contains('.png'))
+                                                ? Image.asset('assets/png/crypto/$flag')
+                                                : RichText(
+                                                    textAlign: TextAlign.center,
+                                                    text: TextSpan(
+                                                      children: <TextSpan>[
+                                                        TextSpan(
+                                                          text: state
+                                                                      .currencies[
+                                                                          index]
+                                                                      .iso !=
+                                                                  null
+                                                              ? state
+                                                                  .currencies[
+                                                                      index]
+                                                                  .getFlag()
+                                                              : '',
+                                                          style:
+                                                              const TextStyle(
+                                                            fontSize: 35,
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
                                                   ),
-                                                ),
-                                              ],
-                                            ),
                                           ),
-                                        ),
-                                        const SizedBox(width: 5),
-                                        Text(
-                                          state.currencies[index].iso ?? '',
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .subtitle2,
-                                        ),
-                                        const SizedBox(width: 10),
-                                        Expanded(
-                                          child: Text(
-                                            state.currencies[index].name ?? '',
+                                          const SizedBox(width: 5),
+                                          Text(
+                                            state.currencies[index].iso ?? '',
                                             style: Theme.of(context)
                                                 .textTheme
-                                                .bodyText2,
+                                                .subtitle2,
                                           ),
-                                        ),
-                                        GestureDetector(
-                                          child: Icon(
-                                            Icons.info_outline,
-                                            color: Theme.of(context).focusColor,
-                                            size: 28.0,
+                                          const SizedBox(width: 10),
+                                          Expanded(
+                                            child: Text(
+                                              state.currencies[index].name ??
+                                                  '',
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .bodyText2,
+                                            ),
                                           ),
-                                          onTapDown: (TapDownDetails details) {
-                                            tapPosition.value =
-                                                details.globalPosition;
-                                          },
-                                          onTapUp: (TapUpDetails details) {
-                                            _showPopupMenu(
-                                              context,
-                                              state.currencies[index],
-                                            );
-                                          },
-                                        ),
-                                      ],
+                                          GestureDetector(
+                                            child: Icon(
+                                              Icons.info_outline,
+                                              color:
+                                                  Theme.of(context).focusColor,
+                                              size: 28.0,
+                                            ),
+                                            onTapDown:
+                                                (TapDownDetails details) {
+                                              tapPosition.value =
+                                                  details.globalPosition;
+                                            },
+                                            onTapUp: (TapUpDetails details) {
+                                              _showPopupMenu(
+                                                context,
+                                                state.currencies[index],
+                                              );
+                                            },
+                                          ),
+                                        ],
+                                      ),
                                     ),
                                   ),
                                 );

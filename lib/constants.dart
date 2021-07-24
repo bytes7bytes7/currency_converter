@@ -21,6 +21,24 @@ abstract class ConstantData {
     11: 'Ноябрь',
     12: 'Декабрь',
   };
+  static const Map<String, String> cryptoFlagImages = {
+    'BTC': 'BTC.png',
+    'BTS': 'BTS.png',
+    'DASH': 'DASH.png',
+    'DOGE': 'DOGE.png',
+    'EMC': 'EMC.png',
+    'ETH': 'ETH.png',
+    'FCT': 'FCT.png',
+    'FTC': 'FTC.png',
+    'LTC': 'LTC.png',
+    'NMC': 'NMC.png',
+    'NVC': 'NVC.png',
+    'NXT': 'NXT.png',
+    'PPC': 'PPC.png',
+    'VTC': 'VTC.png',
+    'XMR': 'XMR.png',
+    'XRP': 'XRP.png',
+  };
 }
 
 abstract class ConstantDBData {

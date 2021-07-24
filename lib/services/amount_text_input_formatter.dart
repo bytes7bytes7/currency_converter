@@ -43,20 +43,24 @@ class AmountTextInputFormatter extends TextInputFormatter {
       // To many dividers (comma & point)
       if (integer.contains('.') && !integer.contains(',')) {
         fractional.addAll(integer.sublist(integer.indexOf('.') + 1));
+        fractional.removeWhere((e) => e=='.');
         divider = '.';
         integer = integer.sublist(0, integer.indexOf('.'));
       } else if (integer.contains(',') && !integer.contains('.')) {
         fractional.addAll(integer.sublist(integer.indexOf(',') + 1));
+        fractional.removeWhere((e) => e==',');
         divider = ',';
         integer = integer.sublist(0, integer.indexOf(','));
       } else {
         if (integer.indexOf('.') < integer.indexOf(',') &&
             integer.contains('.')) {
           fractional.addAll(integer.sublist(integer.indexOf('.') + 1));
+          fractional.removeWhere((e) => e=='.');
           divider = '.';
           integer = integer.sublist(0, integer.indexOf('.'));
         } else {
           fractional.addAll(integer.sublist(integer.indexOf(',') + 1));
+          fractional.removeWhere((e) => e==',');
           divider = ',';
           integer = integer.sublist(0, integer.indexOf(','));
         }

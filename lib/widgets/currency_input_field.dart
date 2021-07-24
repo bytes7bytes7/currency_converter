@@ -45,37 +45,43 @@ class CurrencyInputField extends StatelessWidget {
             width: 120,
             height: 40,
             child: ValueListenableBuilder(
-                valueListenable: currencyNotifier,
-                builder: (context, _, __) {
-                  return Row(
-                    children: [
-                      SizedBox(
-                        width: 40,
-                        height: 40,
-                        child: RichText(
-                          textAlign: TextAlign.center,
-                          text: TextSpan(
-                            children: <TextSpan>[
-                              TextSpan(
-                                text: currencyNotifier.value.iso != null
-                                    ? currencyNotifier.value.getFlag()
-                                    : '',
-                                style: const TextStyle(
-                                  fontSize: 35,
-                                ),
+              valueListenable: currencyNotifier,
+              builder: (context, _, __) {
+                String flag = currencyNotifier.value.iso != null
+                    ? currencyNotifier.value.getFlag()
+                    : '';
+                return Row(
+                  children: [
+                    SizedBox(
+                      width: 40,
+                      height: 40,
+                      child: (flag.isNotEmpty && flag.contains('.png'))
+                          ? Image.asset('assets/png/crypto/$flag')
+                          : RichText(
+                              textAlign: TextAlign.center,
+                              text: TextSpan(
+                                children: <TextSpan>[
+                                  TextSpan(
+                                    text: currencyNotifier.value.iso != null
+                                        ? currencyNotifier.value.getFlag()
+                                        : '',
+                                    style: const TextStyle(
+                                      fontSize: 35,
+                                    ),
+                                  ),
+                                ],
                               ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 5),
-                      Text(
-                        currencyNotifier.value.iso ?? '',
-                        style: Theme.of(context).textTheme.subtitle2,
-                      ),
-                    ],
-                  );
-                }),
+                            ),
+                    ),
+                    const SizedBox(width: 5),
+                    Text(
+                      currencyNotifier.value.iso ?? '',
+                      style: Theme.of(context).textTheme.subtitle2,
+                    ),
+                  ],
+                );
+              },
+            ),
           ),
         ),
       ),

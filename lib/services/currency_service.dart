@@ -40,10 +40,11 @@ abstract class CurrencyService {
           iso: curr['code'],
           rate: double.parse(current),
           country: curr['country'],
-          dayDelta: curr['dayAgo'],
-          weekDelta: curr['weekAgo'],
-          monthDelta: curr['monthAgo'],
-          yearDelta: curr['yearAgo'],
+          dayDelta: ((curr['dayAgo'].isNotEmpty) ? curr['dayAgo'] : '0'),
+          weekDelta: ((curr['weekAgo'].isNotEmpty) ? curr['weekAgo'] : '0'),
+          monthDelta:
+              ((curr['monthAgo'].isNotEmpty) ? curr['monthAgo'] : '0'),
+          yearDelta: ((curr['yearAgo'].isNotEmpty) ? curr['yearAgo'] : '0'),
         ),
       );
     }
