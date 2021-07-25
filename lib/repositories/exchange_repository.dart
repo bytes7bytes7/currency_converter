@@ -25,4 +25,16 @@ abstract class ExchangeRepository {
   static Future<Exchange> getFirstTwoCurrencies() async {
     return await DatabaseHelper.db.getFirstTwoCurrencies();
   }
+
+  static Future<Exchange> getTwoCurrencies(Exchange exchange) async {
+    return await DatabaseHelper.db.getTwoCurrencies(exchange);
+  }
+
+  static Future<List<Exchange>> getAllExchanges()async{
+    return await DatabaseHelper.db.getAllExchanges();
+  }
+
+  static Future<void> addExchange(Exchange exchange)async{
+    return await DatabaseHelper.db.addExchange(exchange);
+  }
 }

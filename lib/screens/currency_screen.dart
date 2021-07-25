@@ -64,105 +64,103 @@ class CurrencyScreen extends StatelessWidget {
         appBar: const _AppBar(),
         body: SafeArea(
           child: Center(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 30.0),
-              child: StreamBuilder(
-                stream: CurrencyBloc.currency,
-                initialData: CurrencyInitState(),
-                builder: (context, snapshot) {
-                  if (snapshot.data is CurrencyInitState) {
-                    CurrencyBloc.loadAllCurrencies();
-                    return const SizedBox.shrink();
-                  } else if (snapshot.data is CurrencyLoadingState) {
-                    return const SizedBox(
-                      height: 50.0,
-                      width: 50.0,
-                      child: LoadingCircle(),
-                    );
-                  } else if (snapshot.data is CurrencyDataState) {
-                    CurrencyDataState state =
-                        snapshot.data as CurrencyDataState;
-                    allCurrencies.addAll(state.currencies);
-                    searchCurrencies.value.addAll(allCurrencies);
-                    return FutureBuilder(
-                        future: computeFuture.value,
-                        builder: (futureContext, futureSnapshot) {
-                          return Column(
-                            children: [
-                              Container(
-                                margin: const EdgeInsets.only(top: 26.0),
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 14.0),
-                                width: double.infinity,
-                                height: 42.0,
-                                decoration: BoxDecoration(
-                                  color: Theme.of(context)
-                                      .disabledColor
-                                      .withOpacity(0.25),
-                                  borderRadius: BorderRadius.circular(12.0),
-                                ),
-                                child: Row(
-                                  children: [
-                                    Padding(
-                                      padding:
-                                          const EdgeInsets.only(right: 14.0),
-                                      child: Icon(
-                                        Icons.search_outlined,
-                                        color: Theme.of(context).disabledColor,
-                                        size: 24.0,
-                                      ),
-                                    ),
-                                    Expanded(
-                                      child: TextField(
-                                        controller: searchController,
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .bodyText2,
-                                        scrollPhysics:
-                                            const BouncingScrollPhysics(),
-                                        onChanged: (value) {
-                                          var callback = createComputeCallback(
-                                              futureContext,
-                                              futureSnapshot,
-                                              value);
-                                          if (callback != null) {
-                                            callback();
-                                          }
-                                        },
-                                        decoration: InputDecoration(
-                                          hintText: 'Поиск',
-                                          hintStyle: Theme.of(context)
-                                              .textTheme
-                                              .subtitle1,
-                                          border: InputBorder.none,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
+            child: StreamBuilder(
+              stream: CurrencyBloc.currency,
+              initialData: CurrencyInitState(),
+              builder: (context, snapshot) {
+                if (snapshot.data is CurrencyInitState) {
+                  CurrencyBloc.loadAllCurrencies();
+                  return const SizedBox.shrink();
+                } else if (snapshot.data is CurrencyLoadingState) {
+                  return const SizedBox(
+                    height: 50.0,
+                    width: 50.0,
+                    child: LoadingCircle(),
+                  );
+                } else if (snapshot.data is CurrencyDataState) {
+                  CurrencyDataState state = snapshot.data as CurrencyDataState;
+                  allCurrencies.clear();
+                  allCurrencies.addAll(state.currencies);
+                  searchCurrencies.value.addAll(allCurrencies);
+                  return FutureBuilder(
+                      future: computeFuture.value,
+                      builder: (futureContext, futureSnapshot) {
+                        return Column(
+                          children: [
+                            Container(
+                              margin: const EdgeInsets.only(
+                                top: 26.0,
+                                left: 30.0,
+                                right: 30.0,
                               ),
-                              (futureSnapshot.connectionState ==
-                                      ConnectionState.waiting)
-                                  ? const SizedBox(
-                                      height: 50.0,
-                                      width: 50.0,
-                                      child: LoadingCircle(),
-                                    )
-                                  : _CurrencyList(
-                                      searchCurrencies: searchCurrencies,
-                                      currencyScrollOffset:
-                                          currencyScrollOffset,
-                                      allCurrencies: allCurrencies,
-                                      currencyNotifier: currencyNotifier,
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 14.0),
+                              width: double.infinity,
+                              height: 42.0,
+                              decoration: BoxDecoration(
+                                color: Theme.of(context)
+                                    .disabledColor
+                                    .withOpacity(0.25),
+                                borderRadius: BorderRadius.circular(12.0),
+                              ),
+                              child: Row(
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.only(right: 14.0),
+                                    child: Icon(
+                                      Icons.search_outlined,
+                                      color: Theme.of(context).disabledColor,
+                                      size: 24.0,
                                     ),
-                            ],
-                          );
-                        });
-                  } else {
-                    return const SizedBox.shrink();
-                  }
-                },
-              ),
+                                  ),
+                                  Expanded(
+                                    child: TextField(
+                                      controller: searchController,
+                                      style:
+                                          Theme.of(context).textTheme.bodyText2,
+                                      scrollPhysics:
+                                          const BouncingScrollPhysics(),
+                                      onChanged: (value) {
+                                        var callback = createComputeCallback(
+                                            futureContext,
+                                            futureSnapshot,
+                                            value);
+                                        if (callback != null) {
+                                          callback();
+                                        }
+                                      },
+                                      decoration: InputDecoration(
+                                        hintText: 'Поиск',
+                                        hintStyle: Theme.of(context)
+                                            .textTheme
+                                            .subtitle1,
+                                        border: InputBorder.none,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            (futureSnapshot.connectionState ==
+                                    ConnectionState.waiting)
+                                ? const SizedBox(
+                                    height: 50.0,
+                                    width: 50.0,
+                                    child: LoadingCircle(),
+                                  )
+                                : _CurrencyList(
+                                    searchCurrencies: searchCurrencies,
+                                    currencyScrollOffset: currencyScrollOffset,
+                                    allCurrencies: allCurrencies,
+                                    currencyNotifier: currencyNotifier,
+                                  ),
+                          ],
+                        );
+                      });
+                } else {
+                  return const SizedBox.shrink();
+                }
+              },
             ),
           ),
         ),
@@ -313,98 +311,113 @@ class _CurrencyList extends StatelessWidget {
       valueListenable: searchCurrencies,
       builder: (context, _, __) {
         return Expanded(
-          child: ListView.separated(
+          child: Scrollbar(
             controller: ScrollController(
                 initialScrollOffset: currencyScrollOffset.value),
-            physics: const BouncingScrollPhysics(),
-            itemCount: searchCurrencies.value.length,
-            separatorBuilder: (context, index) {
-              return Container(
-                height: 1.0,
-                width: double.infinity,
-                color: Theme.of(context).disabledColor.withOpacity(0.25),
-              );
-            },
-            itemBuilder: (context, index) {
-              String flag = searchCurrencies.value[index].iso != null
-                  ? searchCurrencies.value[index].getFlag()
-                  : '';
-              return Container(
-                margin: const EdgeInsets.symmetric(vertical: 10),
-                child: RawMaterialButton(
-                  padding: const EdgeInsets.all(0),
-                  onPressed: () {
-                    int i = allCurrencies.indexWhere(
-                        (e) => e.iso == searchCurrencies.value[index].iso);
-                    currencyScrollOffset.value = i * 80.0 + i - 40.0;
-                    currencyNotifier.value = searchCurrencies.value[index];
-                    ExchangeBloc.updateCalculation();
-                    Navigator.pop(context);
-                  },
-                  child: SizedBox(
-                    height: 60.0,
-                    width: double.infinity,
-                    child: Row(
-                      children: [
-                        SizedBox(
-                          width: 40,
-                          height: 40,
-                          child: (flag.isNotEmpty && flag.contains('.png'))
-                              ? Image.asset('assets/png/additional_flags/$flag')
-                              : RichText(
-                                  textAlign: TextAlign.center,
-                                  text: TextSpan(
-                                    children: <TextSpan>[
-                                      TextSpan(
-                                        text:
-                                            searchCurrencies.value[index].iso !=
-                                                    null
-                                                ? searchCurrencies.value[index]
-                                                    .getFlag()
-                                                : '',
-                                        style: const TextStyle(
-                                          fontSize: 35,
+            thickness: 8,
+            radius: const Radius.circular(5),
+            child: ListView.separated(
+              controller: ScrollController(
+                  initialScrollOffset: currencyScrollOffset.value),
+              physics: const BouncingScrollPhysics(),
+              itemCount: searchCurrencies.value.length,
+              separatorBuilder: (context, index) {
+                return Container(
+                  margin: const EdgeInsets.symmetric(horizontal: 30.0),
+                  height: 1.0,
+                  width: double.infinity,
+                  color: Theme.of(context).disabledColor.withOpacity(0.25),
+                );
+              },
+              itemBuilder: (context, index) {
+                String flag = searchCurrencies.value[index].iso != null
+                    ? searchCurrencies.value[index].getFlag()
+                    : '';
+                return Container(
+                  margin: const EdgeInsets.symmetric(vertical: 10),
+                  child: RawMaterialButton(
+                    padding: const EdgeInsets.all(0),
+                    onPressed: () {
+                      int i = allCurrencies.indexWhere(
+                          (e) => e.iso == searchCurrencies.value[index].iso);
+                      currencyScrollOffset.value = i * 80.0 + i - 40.0;
+                      currencyNotifier.value = searchCurrencies.value[index];
+                      ExchangeBloc.updateCalculation();
+                      Navigator.pop(context);
+                    },
+                    child: SizedBox(
+                      height: 60.0,
+                      width: double.infinity,
+                      child: Row(
+                        children: [
+                          const SizedBox(width: 30.0),
+                          SizedBox(
+                            width: 40,
+                            height: 40,
+                            child: (flag.isNotEmpty && flag.contains('.png'))
+                                ? Image.asset(
+                                    'assets/png/additional_flags/$flag')
+                                : RichText(
+                                    textAlign: TextAlign.center,
+                                    text: TextSpan(
+                                      children: <TextSpan>[
+                                        TextSpan(
+                                          text: flag,
+                                          style: const TextStyle(
+                                            fontSize: 35,
+                                          ),
                                         ),
-                                      ),
-                                    ],
+                                      ],
+                                    ),
                                   ),
-                                ),
-                        ),
-                        const SizedBox(width: 5),
-                        Text(
-                          searchCurrencies.value[index].iso ?? '',
-                          style: Theme.of(context).textTheme.subtitle2,
-                        ),
-                        const SizedBox(width: 10),
-                        Expanded(
-                          child: Text(
-                            searchCurrencies.value[index].name ?? '',
-                            style: Theme.of(context).textTheme.bodyText2,
-                            // TODO: solve problem with overflow
                           ),
-                        ),
-                        GestureDetector(
-                          child: Icon(
-                            Icons.info_outline,
-                            color: Theme.of(context).focusColor,
-                            size: 28.0,
+                          const SizedBox(width: 5),
+                          Text(
+                            searchCurrencies.value[index].iso ?? '',
+                            style: Theme.of(context).textTheme.subtitle2,
                           ),
-                          onTapDown: (TapDownDetails details) {
-                            _tapPosition.value = details.globalPosition;
-                          },
-                          onTapUp: (TapUpDetails details) {
-                            _showPopupMenu(
-                              context,
-                              searchCurrencies.value[index],
-                            );
-                          },
-                        ),
-                      ],
+                          const SizedBox(width: 10),
+                          Flexible(
+                            child: TextFormField(
+                              scrollPhysics: const BouncingScrollPhysics(),
+                              initialValue:
+                                  searchCurrencies.value[index].name ?? '',
+                              style: Theme.of(context).textTheme.bodyText2,
+                              maxLines: 1,
+                              enabled: false,
+                              decoration: const InputDecoration(
+                                border: InputBorder.none,
+                              ),
+
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(left: 4.0),
+                            child: GestureDetector(
+                              child: Icon(
+                                Icons.info_outline,
+                                color: Theme.of(context).focusColor,
+                                size: 28.0,
+                              ),
+                              onTapDown: (TapDownDetails details) {
+                                _tapPosition.value = details.globalPosition;
+                              },
+                              onTapUp: (TapUpDetails details) {
+                                _showPopupMenu(
+                                  context,
+                                  searchCurrencies.value[index],
+                                );
+                              },
+                            ),
+                          ),
+                          const SizedBox(width: 30.0),
+                        ],
+                      ),
                     ),
                   ),
-                ),
-              );
-            },
+                );
+              },
+            ),
           ),
         );
       },

@@ -194,7 +194,7 @@ class DatabaseHelper {
     await db.rawInsert(
       "INSERT INTO ${ConstantDBData.historyTableName} (${ConstantDBData.time}, ${ConstantDBData.iso1}, ${ConstantDBData.iso2}, ${ConstantDBData.value1}, ${ConstantDBData.value2}) VALUES (?,?,?,?,?)",
       [
-        exchange.time.toString(),
+        exchange.time,
         exchange.leftCurrency!.iso,
         exchange.rightCurrency!.iso,
         exchange.leftValue,
@@ -218,16 +218,33 @@ class DatabaseHelper {
     final db = await database;
     List<Map<String, dynamic>> data = await db.rawQuery(
         'SELECT * FROM ${ConstantDBData.currencyTableName} ORDER BY ${ConstantDBData.iso} LIMIT 2;');
+    DateTime now = DateTime.now();
     if (data.isNotEmpty) {
       Exchange exchange = Exchange();
-      exchange.time = DateTime.now();
-      exchange.leftValue=null;
-      exchange.rightValue=null;
+      exchange.time = '${now.hour}:${now.minute} ${now.day}.${now.month}.${now.year}';
+      exchange.leftValue = null;
+      exchange.rightValue = null;
       exchange.leftCurrency = Currency.fromMap(data[0]);
       exchange.rightCurrency = Currency.fromMap(data[1]);
       return exchange;
     } else {
       return Exchange();
+    }
+  }
+
+  Future<Exchange> getTwoCurrencies(Exchange exchange) async {
+    Currency? left = await getCurrency(exchange.leftCurrency!.iso!);
+    Currency? right = await getCurrency(exchange.rightCurrency!.iso!);
+    return exchange..leftCurrency=left ?? Currency()..rightCurrency=right ?? Currency();
+  }
+
+  Future<List<Exchange>> getAllExchanges()async{
+    final db = await database;
+    List<Map<String, dynamic>> data = await db.query(ConstantDBData.historyTableName);
+    if (data.isNotEmpty) {
+      return data.map((e) => Exchange.fromMap(e)).toList();
+    } else {
+      return <Exchange>[];
     }
   }
 }

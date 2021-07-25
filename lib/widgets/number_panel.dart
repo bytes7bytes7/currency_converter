@@ -16,7 +16,7 @@ class NumberPanel extends StatelessWidget {
   Widget build(BuildContext context) {
     final Size size = MediaQuery.of(context).size;
     final double height = size.height * 0.475;
-    const double buttonWidth = 70.0;
+    final double buttonWidth = size.width * 0.18;
     return LayoutBuilder(builder: (context, constraints) {
       final double xSpace = (constraints.maxWidth - 3 * buttonWidth) / 2;
       final double ySpace = (height - 4 * buttonWidth) / 3;

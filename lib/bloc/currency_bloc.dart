@@ -1,7 +1,6 @@
 import 'dart:async';
 
-import 'package:currency_converter/bloc/info_bloc.dart';
-
+import '../bloc/info_bloc.dart';
 import '../repositories/currency_repository.dart';
 import '../models/currency.dart';
 
@@ -19,7 +18,7 @@ abstract class CurrencyBloc {
   //   }
   // }
 
-  static void updateCurrencies() async {
+  static Future<void> updateCurrencies() async {
     InfoBloc.sinkLoading();
     _currencyStreamController.sink.add(CurrencyState._currencyLoading());
     CurrencyRepository.updateCurrencies().then((List<Currency> currencyList) {
@@ -42,7 +41,7 @@ abstract class CurrencyBloc {
     });
   }
 
-  static void loadAllCurrencies() async {
+  static Future<void> loadAllCurrencies() async {
     _currencyStreamController.sink.add(CurrencyState._currencyLoading());
     CurrencyRepository.getAllCurrencies().then((List<Currency> currencyList) {
       currencyList.sort(

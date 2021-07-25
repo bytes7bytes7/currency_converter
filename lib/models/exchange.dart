@@ -9,27 +9,35 @@ class Exchange {
     this.rightValue,
   });
 
-  DateTime? time;
+  String? time;
   Currency? leftCurrency;
   Currency? rightCurrency;
   double? leftValue;
   double? rightValue;
 
-  Map<String, dynamic> toMap(){
-    return {
-      'time' : time,
-      'leftCurrency' : leftCurrency,
-      'rightCurrency' : rightCurrency,
-      'leftValue' : leftValue,
-      'rightValue' : rightValue,
-    };
+  Exchange.from(Exchange other) {
+    time = other.time;
+    leftCurrency = Currency.from(other.leftCurrency!);
+    rightCurrency = Currency.from(other.rightCurrency!);
+    leftValue = other.leftValue;
+    rightValue = other.rightValue;
   }
 
   Exchange.fromMap(Map<String, dynamic> map) {
-    time = DateTime.parse(map['time']);
-    leftCurrency = Currency(iso: map['leftCurrency']);
-    rightCurrency = Currency(iso: map['rightCurrency']);
-    leftValue = map['leftValue'];
-    rightValue = map['rightValue'];
+    time = map['time'];
+    leftCurrency = Currency(iso: map['iso1']);
+    rightCurrency = Currency(iso: map['iso2']);
+    leftValue = map['value1'];
+    rightValue = map['value2'];
+  }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'time': time,
+      'leftCurrency': leftCurrency,
+      'rightCurrency': rightCurrency,
+      'leftValue': leftValue,
+      'rightValue': rightValue,
+    };
   }
 }

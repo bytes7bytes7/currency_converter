@@ -8,18 +8,18 @@ abstract class ConstantColors {
 
 abstract class ConstantData {
   static const Map<int, String> month = {
-    1: 'Январь',
-    2: 'Февраль',
-    3: 'Март',
-    4: 'Апрель',
+    1: 'Янв',
+    2: 'Фев',
+    3: 'Мар',
+    4: 'Апр',
     5: 'Май',
-    6: 'Июнь',
-    7: 'Июль',
-    8: 'Август',
-    9: 'Сентябрь',
-    10: 'Октябрь',
-    11: 'Ноябрь',
-    12: 'Декабрь',
+    6: 'Июн',
+    7: 'Июл',
+    8: 'Авг',
+    9: 'Сен',
+    10: 'Окт',
+    11: 'Ноя',
+    12: 'Дек',
   };
   static const Map<String, String> cryptoFlagImages = {
     'BTC': 'BTC.png',

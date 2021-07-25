@@ -16,7 +16,7 @@ abstract class InfoBloc {
   //   }
   // }
 
-  static void getLastDate() async {
+  static Future<void> getLastDate() async {
     _infoStreamController.sink.add(InfoState._infoLoading());
     InfoRepository.getLastDate().then((date) {
       if (!_infoStreamController.isClosed) {
@@ -29,11 +29,11 @@ abstract class InfoBloc {
     });
   }
 
-  static void sinkLoading() {
+  static Future<void> sinkLoading() async {
     _infoStreamController.sink.add(InfoState._infoLoading());
   }
 
-  static void sinkError() async {
+  static Future<void> sinkError() async {
     _infoStreamController.sink.add(InfoState._infoLoadingError());
   }
 }
