@@ -305,6 +305,15 @@ class _CurrencyList extends StatelessWidget {
     ).then((value) {});
   }
 
+  void onPressed(BuildContext context, int index) {
+    int i = allCurrencies.indexWhere(
+            (e) => e.iso == searchCurrencies.value[index].iso);
+    currencyScrollOffset.value = i * 80.0 + i - 40.0;
+    currencyNotifier.value = searchCurrencies.value[index];
+    ExchangeBloc.updateCalculation();
+    Navigator.pop(context);
+  }
+
   @override
   Widget build(BuildContext context) {
     return ValueListenableBuilder(
@@ -338,12 +347,7 @@ class _CurrencyList extends StatelessWidget {
                   child: RawMaterialButton(
                     padding: const EdgeInsets.all(0),
                     onPressed: () {
-                      int i = allCurrencies.indexWhere(
-                          (e) => e.iso == searchCurrencies.value[index].iso);
-                      currencyScrollOffset.value = i * 80.0 + i - 40.0;
-                      currencyNotifier.value = searchCurrencies.value[index];
-                      ExchangeBloc.updateCalculation();
-                      Navigator.pop(context);
+                      onPressed(context, index);
                     },
                     child: SizedBox(
                       height: 60.0,
@@ -384,11 +388,13 @@ class _CurrencyList extends StatelessWidget {
                                   searchCurrencies.value[index].name ?? '',
                               style: Theme.of(context).textTheme.bodyText2,
                               maxLines: 1,
-                              enabled: false,
+                              readOnly: true,
+                              onTap: (){
+                                onPressed(context, index);
+                              },
                               decoration: const InputDecoration(
                                 border: InputBorder.none,
                               ),
-
                             ),
                           ),
                           Padding(
