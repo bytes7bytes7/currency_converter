@@ -31,9 +31,25 @@ abstract class HistoryBloc {
   static Future<void> getAllExchanges() async {
     _historyStreamController.sink.add(HistoryState._exchangeLoading());
     ExchangeRepository.getAllExchanges().then((List<Exchange> exchanges) {
+      exchanges = List.from(exchanges.reversed);
       if (!_historyStreamController.isClosed) {
         _historyStreamController.sink
             .add(HistoryState._exchangeData(exchanges));
+      }
+    }).onError((Error error, StackTrace stackTrace) {
+      if (!_historyStreamController.isClosed) {
+        _historyStreamController.sink
+            .add(HistoryState._exchangeError(error, stackTrace));
+      }
+    });
+  }
+
+  static Future<void> deleteAllExchanges()async{
+    _historyStreamController.sink.add(HistoryState._exchangeLoading());
+    ExchangeRepository.deleteAllExchanges().then((_) {
+      if (!_historyStreamController.isClosed) {
+        _historyStreamController.sink
+            .add(HistoryState._exchangeData(<Exchange>[]));
       }
     }).onError((Error error, StackTrace stackTrace) {
       if (!_historyStreamController.isClosed) {

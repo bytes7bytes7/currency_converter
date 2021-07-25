@@ -21,7 +21,7 @@ class Currency {
   String? monthDelta;
   String? yearDelta;
 
-  Currency.from(Currency other){
+  Currency.from(Currency other) {
     iso = other.iso;
     name = other.name;
     country = other.country;
@@ -57,17 +57,11 @@ class Currency {
   }
 
   String getFlag() {
-    if (country != null && country!.isEmpty){
-      if (ConstantData.cryptoFlagImages[iso] != null){
-        return ConstantData.cryptoFlagImages[iso]!;
-      }
-      final int firstLetter = 'DA'.codeUnitAt(0) - 0x41 + 0x1F1E6;
-      final int secondLetter = 'DA'.codeUnitAt(1) - 0x41 + 0x1F1E6;
-      return String.fromCharCode(firstLetter) + String.fromCharCode(secondLetter);
-    }
     int firstLetter;
     int secondLetter;
-    if (iso == 'ANG'){
+    if (ConstantData.cryptoFlagImages[iso] != null) {
+      return ConstantData.cryptoFlagImages[iso]!;
+    }else if (iso == 'ANG') {
       firstLetter = 'CW'.codeUnitAt(0) - 0x41 + 0x1F1E6;
       secondLetter = 'CW'.codeUnitAt(1) - 0x41 + 0x1F1E6;
     }else {

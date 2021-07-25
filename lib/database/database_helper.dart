@@ -121,7 +121,7 @@ class DatabaseHelper {
         whereArgs: [iso]);
     if (data.isNotEmpty) {
       return Currency.fromMap(Map<String, dynamic>.from(data.first));
-    }else{
+    } else {
       return Currency();
     }
   }
@@ -145,7 +145,6 @@ class DatabaseHelper {
 
   Future deleteAllCurrencies() async {
     final db = await database;
-    // TODO: this code does not delete a row
     db.rawDelete("DELETE FROM ${ConstantDBData.currencyTableName}");
   }
 
@@ -200,8 +199,8 @@ class DatabaseHelper {
         exchange.time,
         exchange.leftCurrency!.value.iso,
         exchange.rightCurrency!.value.iso,
-        exchange.leftValue,
-        exchange.rightValue,
+        exchange.leftValue.text,
+        exchange.rightValue.text,
       ],
     );
   }
@@ -224,7 +223,8 @@ class DatabaseHelper {
     DateTime now = DateTime.now();
     if (data.isNotEmpty) {
       Exchange exchange = Exchange();
-      exchange.time = '${now.hour}:${now.minute} ${now.day}.${now.month}.${now.year}';
+      exchange.time =
+          '${now.hour}:${now.minute} ${now.day}.${now.month}.${now.year} ${now.microsecond}';
       exchange.leftValue.text = '';
       exchange.rightValue.text = '';
       exchange.leftCurrency = ValueNotifier(Currency.fromMap(data[0]));
@@ -238,16 +238,24 @@ class DatabaseHelper {
   Future<Exchange> getTwoCurrencies(Exchange exchange) async {
     Currency? left = await getCurrency(exchange.leftCurrency!.value.iso!);
     Currency? right = await getCurrency(exchange.rightCurrency!.value.iso!);
-    return exchange..leftCurrency!.value=left..rightCurrency!.value=right;
+    return exchange
+      ..leftCurrency!.value = left
+      ..rightCurrency!.value = right;
   }
 
-  Future<List<Exchange>> getAllExchanges()async{
+  Future<List<Exchange>> getAllExchanges() async {
     final db = await database;
-    List<Map<String, dynamic>> data = await db.query(ConstantDBData.historyTableName);
+    List<Map<String, dynamic>> data =
+        await db.query(ConstantDBData.historyTableName);
     if (data.isNotEmpty) {
       return data.map((e) => Exchange.fromMap(e)).toList();
     } else {
       return <Exchange>[];
     }
+  }
+
+  Future<void> deleteAllExchanges() async {
+    final db = await database;
+    db.rawDelete("DELETE FROM ${ConstantDBData.historyTableName}");
   }
 }

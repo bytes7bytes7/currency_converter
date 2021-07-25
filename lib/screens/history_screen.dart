@@ -98,7 +98,9 @@ class _AppBar extends StatelessWidget implements PreferredSizeWidget {
           ),
           splashColor: Theme.of(context).disabledColor.withOpacity(0.25),
           splashRadius: 22.0,
-          onPressed: () {},
+          onPressed: () {
+            HistoryBloc.deleteAllExchanges();
+          },
         ),
       ],
     );
@@ -173,21 +175,32 @@ class _HistoryList extends StatelessWidget {
           if (leftValue.isEmpty) {
             leftValue = '0';
           }
-          if (double.parse(leftValue.replaceAll(',', '.')) == double.parse(leftValue.replaceAll(',', '.')).toInt()) {
-            leftValue = leftValue.substring(0, leftValue.indexOf(','));
+          if(leftValue.contains(',')) {
+            if (double.parse(
+                leftValue.replaceAll(',', '.').replaceAll(' ', '')) ==
+                double.parse(leftValue.replaceAll(',', '.').replaceAll(' ', ''))
+                    .toInt()) {
+              leftValue = leftValue.substring(0, leftValue.indexOf(','));
+            }
+            leftValue = leftValue.replaceAll('.', ',');
           }
-          leftValue = leftValue.replaceAll('.', ',');
           String rightValue = exchanges[index].rightValue.text;
           if (rightValue.isEmpty) {
             rightValue = '0';
           }
-          if (double.parse(rightValue.replaceAll(',', '.')) == double.parse(rightValue.replaceAll(',', '.')).toInt()) {
-            rightValue = rightValue.substring(0, rightValue.indexOf(','));
+          if(rightValue.contains(',')) {
+            if (double.parse(
+                rightValue.replaceAll(',', '.').replaceAll(' ', '')) ==
+                double.parse(
+                    rightValue.replaceAll(',', '.').replaceAll(' ', ''))
+                    .toInt()) {
+              rightValue = rightValue.substring(0, rightValue.indexOf(','));
+            }
+            rightValue = rightValue.replaceAll('.', ',');
           }
-          rightValue = rightValue.replaceAll('.', ',');
           return Container(
             margin: const EdgeInsets.symmetric(vertical: 10),
-            height: 80.0,
+            height: 90.0,
             child: RawMaterialButton(
               padding: const EdgeInsets.all(0),
               onPressed: () {
@@ -198,96 +211,197 @@ class _HistoryList extends StatelessWidget {
                   ..rightCurrency!.value = exchanges[index].rightCurrency!.value;
                 Navigator.pop(context);
               },
-              child: Column(
-                children: [
-                  Row(
-                    children: [
-                      const SizedBox(width: 30.0),
-                      SizedBox(
-                        width: 40,
-                        height: 40,
-                        child:
-                            (leftFlag.isNotEmpty && leftFlag.contains('.png'))
-                                ? Image.asset(
-                                    'assets/png/additional_flags/$leftFlag')
-                                : RichText(
-                                    textAlign: TextAlign.center,
-                                    text: TextSpan(
-                                      children: <TextSpan>[
-                                        TextSpan(
-                                          text: leftFlag,
-                                          style: const TextStyle(
-                                            fontSize: 35,
-                                          ),
-                                        ),
-                                      ],
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 30.0,vertical: 10.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            SizedBox(
+                              width: 40,
+                              height: 40,
+                              child:
+                              (leftFlag.isNotEmpty && leftFlag.contains('.png'))
+                                  ? Image.asset(
+                                  'assets/png/additional_flags/$leftFlag')
+                                  : RichText(
+                                textAlign: TextAlign.center,
+                                text: TextSpan(
+                                  children: <TextSpan>[
+                                    TextSpan(
+                                      text: leftFlag,
+                                      style: const TextStyle(
+                                        fontSize: 35,
+                                      ),
                                     ),
-                                  ),
-                      ),
-                      const SizedBox(width: 5),
-                      Text(
-                        exchanges[index].leftCurrency!.value.iso ?? '',
-                        style: Theme.of(context).textTheme.subtitle2,
-                      ),
-                      Expanded(
-                        child: Text(
+                                  ],
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 5),
+                            Text(
+                              exchanges[index].leftCurrency!.value.iso ?? '',
+                              style: Theme.of(context).textTheme.subtitle2,
+                            ),
+                          ],
+                        ),
+                        Text(
+                          leftValue,
+                          style: Theme.of(context).textTheme.headline1,
+                        ),
+                      ],
+                    ),
+                    Column(
+                      children: [
+                        Text(
                           time,
                           style: Theme.of(context).textTheme.bodyText2,
                           textAlign: TextAlign.center,
                         ),
-                      ),
-                      SizedBox(
-                        width: 40,
-                        height: 40,
-                        child:
-                            (rightFlag.isNotEmpty && rightFlag.contains('.png'))
-                                ? Image.asset(
-                                    'assets/png/additional_flags/$rightFlag')
-                                : RichText(
-                                    textAlign: TextAlign.center,
-                                    text: TextSpan(
-                                      children: <TextSpan>[
-                                        TextSpan(
-                                          text: rightFlag,
-                                          style: const TextStyle(
-                                            fontSize: 35,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                      ),
-                      const SizedBox(width: 5),
-                      Text(
-                        exchanges[index].rightCurrency!.value.iso ?? '',
-                        style: Theme.of(context).textTheme.subtitle2,
-                      ),
-                      const SizedBox(width: 30.0),
-                    ],
-                  ),
-                  Row(
-                    children: [
-                      const SizedBox(width: 30.0),
-                      Text(
-                        leftValue,
-                        style: Theme.of(context).textTheme.headline1,
-                      ),
-                      Expanded(
-                        child: Icon(
+                        Icon(
                           Icons.arrow_right_alt_outlined,
                           color: Theme.of(context).focusColor,
                           size: 40.0,
                         ),
-                      ),
-                      Text(
-                        rightValue,
-                        style: Theme.of(context).textTheme.headline1,
-                      ),
-                      const SizedBox(width: 30.0),
-                    ],
-                  ),
-                ],
+                      ],
+                    ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Row(
+                          children: [
+                            SizedBox(
+                              width: 40,
+                              height: 40,
+                              child:
+                              (rightFlag.isNotEmpty && rightFlag.contains('.png'))
+                                  ? Image.asset(
+                                  'assets/png/additional_flags/$rightFlag')
+                                  : RichText(
+                                textAlign: TextAlign.center,
+                                text: TextSpan(
+                                  children: <TextSpan>[
+                                    TextSpan(
+                                      text: rightFlag,
+                                      style: const TextStyle(
+                                        fontSize: 35,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 5),
+                            Text(
+                              exchanges[index].rightCurrency!.value.iso ?? '',
+                              style: Theme.of(context).textTheme.subtitle2,
+                            ),
+                          ],
+                        ),
+                        Text(
+                          rightValue,
+                          style: Theme.of(context).textTheme.headline1,
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
+              // child: Column(
+              //   children: [
+              //     Row(
+              //       children: [
+              //         const SizedBox(width: 30.0),
+              //         SizedBox(
+              //           width: 40,
+              //           height: 40,
+              //           child:
+              //               (leftFlag.isNotEmpty && leftFlag.contains('.png'))
+              //                   ? Image.asset(
+              //                       'assets/png/additional_flags/$leftFlag')
+              //                   : RichText(
+              //                       textAlign: TextAlign.center,
+              //                       text: TextSpan(
+              //                         children: <TextSpan>[
+              //                           TextSpan(
+              //                             text: leftFlag,
+              //                             style: const TextStyle(
+              //                               fontSize: 35,
+              //                             ),
+              //                           ),
+              //                         ],
+              //                       ),
+              //                     ),
+              //         ),
+              //         const SizedBox(width: 5),
+              //         Text(
+              //           exchanges[index].leftCurrency!.value.iso ?? '',
+              //           style: Theme.of(context).textTheme.subtitle2,
+              //         ),
+              //         Expanded(
+              //           child: Text(
+              //             time,
+              //             style: Theme.of(context).textTheme.bodyText2,
+              //             textAlign: TextAlign.center,
+              //           ),
+              //         ),
+              //         SizedBox(
+              //           width: 40,
+              //           height: 40,
+              //           child:
+              //               (rightFlag.isNotEmpty && rightFlag.contains('.png'))
+              //                   ? Image.asset(
+              //                       'assets/png/additional_flags/$rightFlag')
+              //                   : RichText(
+              //                       textAlign: TextAlign.center,
+              //                       text: TextSpan(
+              //                         children: <TextSpan>[
+              //                           TextSpan(
+              //                             text: rightFlag,
+              //                             style: const TextStyle(
+              //                               fontSize: 35,
+              //                             ),
+              //                           ),
+              //                         ],
+              //                       ),
+              //                     ),
+              //         ),
+              //         const SizedBox(width: 5),
+              //         Text(
+              //           exchanges[index].rightCurrency!.value.iso ?? '',
+              //           style: Theme.of(context).textTheme.subtitle2,
+              //         ),
+              //         const SizedBox(width: 30.0),
+              //       ],
+              //     ),
+              //     Row(
+              //       children: [
+              //         const SizedBox(width: 30.0),
+              //         Text(
+              //           leftValue,
+              //           style: Theme.of(context).textTheme.headline1,
+              //         ),
+              //         Expanded(
+              //           child: Icon(
+              //             Icons.arrow_right_alt_outlined,
+              //             color: Theme.of(context).focusColor,
+              //             size: 40.0,
+              //           ),
+              //         ),
+              //         Text(
+              //           rightValue,
+              //           style: Theme.of(context).textTheme.headline1,
+              //         ),
+              //         const SizedBox(width: 30.0),
+              //       ],
+              //     ),
+              //   ],
+              // ),
             ),
           );
         },

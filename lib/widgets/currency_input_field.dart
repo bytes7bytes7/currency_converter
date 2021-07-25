@@ -12,12 +12,14 @@ class CurrencyInputField extends StatelessWidget {
     required this.currencyNotifier,
     required this.textEditingController,
     required this.currencyScrollOffset,
+    required this.addToHistory,
   }) : super(key: key);
 
   final bool enabled;
   final ValueNotifier<Currency> currencyNotifier;
   final TextEditingController textEditingController;
   final ValueNotifier<double> currencyScrollOffset;
+  final Function addToHistory;
 
   void loadCurrencyData() async {
     currencyNotifier.value =
@@ -64,6 +66,9 @@ class CurrencyInputField extends StatelessWidget {
             child: ValueListenableBuilder(
               valueListenable: currencyNotifier,
               builder: (context, _, __) {
+                if(textEditingController.text.isNotEmpty && enabled){
+                  addToHistory();
+                }
                 if (currencyNotifier.value.rate == null) {
                   loadCurrencyData();
                 }

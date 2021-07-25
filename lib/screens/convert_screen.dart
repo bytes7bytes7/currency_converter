@@ -1,17 +1,17 @@
-import 'package:currency_converter/bloc/exchange_bloc.dart';
-import 'package:currency_converter/bloc/history_bloc.dart';
-import 'package:currency_converter/models/exchange.dart';
-import 'package:currency_converter/widgets/loading_circle.dart';
 import 'package:flutter/material.dart';
 
+import '../widgets/loading_circle.dart';
 import '../widgets/loading_label.dart';
 import '../widgets/number_panel.dart';
 import '../widgets/currency_input_field.dart';
-import '../services/amount_text_input_formatter.dart';
-import '../services/next_page_route.dart';
-import '../models/currency.dart';
 import '../bloc/info_bloc.dart';
 import '../bloc/currency_bloc.dart';
+import '../bloc/exchange_bloc.dart';
+import '../bloc/history_bloc.dart';
+import '../models/currency.dart';
+import '../models/exchange.dart';
+import '../services/amount_text_input_formatter.dart';
+import '../services/next_page_route.dart';
 import '../constants.dart';
 import 'history_screen.dart';
 import 'settings_screen.dart';
@@ -28,6 +28,18 @@ class ConvertScreen extends StatelessWidget {
   final AmountTextInputFormatter _formatter = AmountTextInputFormatter();
   final ValueNotifier<double> currencyScrollOffset1 = ValueNotifier(0.0);
   final ValueNotifier<double> currencyScrollOffset2 = ValueNotifier(0.0);
+  final ValueNotifier<String> lastAction = ValueNotifier('');
+
+  void addToHistory() {
+    DateTime now = DateTime.now();
+    HistoryBloc.addExchange(Exchange(
+      time: '${now.hour}:${now.minute} ${now.day}.${now.month}.${now.year} ${now.microsecond}',
+      leftCurrency: exchangeNotifier.value.leftCurrency,
+      rightCurrency: exchangeNotifier.value.rightCurrency,
+    )
+      ..leftValue.text = exchangeNotifier.value.leftValue.text
+      ..rightValue.text = exchangeNotifier.value.rightValue.text);
+  }
 
   void changeValue(String action) {
     if (exchangeNotifier.value.leftCurrency!.value.iso == null ||
@@ -35,6 +47,9 @@ class ConvertScreen extends StatelessWidget {
       return;
     }
     if (action == 'erase') {
+      if (lastAction.value != 'erase') {
+        addToHistory();
+      }
       if (exchangeNotifier.value.leftValue.selection.end != 0 &&
           exchangeNotifier.value.leftValue.text.isNotEmpty) {
         final oldValue = exchangeNotifier.value.leftValue.value;
@@ -109,11 +124,16 @@ class ConvertScreen extends StatelessWidget {
     } else {
       exchangeNotifier.value.rightValue.text = '';
     }
+    lastAction.value = action;
   }
 
-  void clearField() {
+  void cleanField() {
+    if (lastAction.value != 'erase') {
+      addToHistory();
+    }
     exchangeNotifier.value.leftValue.text = '';
     exchangeNotifier.value.rightValue.text = '';
+    lastAction.value = 'erase';
   }
 
   @override
@@ -336,6 +356,7 @@ class ConvertScreen extends StatelessWidget {
                             textEditingController:
                                 exchangeNotifier.value.leftValue,
                             currencyScrollOffset: currencyScrollOffset1,
+                            addToHistory: addToHistory,
                           ),
                           IconButton(
                             icon: Icon(
@@ -368,6 +389,7 @@ class ConvertScreen extends StatelessWidget {
                             textEditingController:
                                 exchangeNotifier.value.rightValue,
                             currencyScrollOffset: currencyScrollOffset2,
+                            addToHistory: addToHistory,
                           ),
                         ],
                       );
@@ -381,7 +403,7 @@ class ConvertScreen extends StatelessWidget {
                 ),
                 NumberPanel(
                   onTap: changeValue,
-                  onLongPress: clearField,
+                  onLongPress: cleanField,
                 ),
                 const Spacer(
                   flex: 2,
@@ -433,26 +455,6 @@ class _AppBar extends StatelessWidget implements PreferredSizeWidget {
         style: Theme.of(context).textTheme.headline1,
       ),
       actions: [
-        IconButton(
-          icon: Icon(
-            Icons.add,
-            size: 28.0,
-            color: Theme.of(context).focusColor,
-          ),
-          splashColor: Theme.of(context).disabledColor.withOpacity(0.25),
-          splashRadius: 22.0,
-          onPressed: () {
-            DateTime now = DateTime.now();
-            HistoryBloc.addExchange(Exchange(
-              time:
-                  '${now.hour}:${now.minute} ${now.day}.${now.month}.${now.year}',
-              leftCurrency: ValueNotifier(Currency(iso: 'RUB')),
-              rightCurrency: ValueNotifier(Currency(iso: 'BRL')),
-            )
-              ..leftValue.text = '100'
-              ..rightValue.text = '7.04');
-          },
-        ),
         IconButton(
           icon: Icon(
             Icons.history_outlined,
