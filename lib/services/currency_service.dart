@@ -26,6 +26,10 @@ abstract class CurrencyService {
         iso: 'USD',
         rate: 1.0,
         country: 'США',
+        dayDelta: '0',
+        weekDelta: '0',
+        monthDelta: '0',
+        yearDelta: '0',
       ),
     ];
     for (var curr in jsonData) {
@@ -42,8 +46,7 @@ abstract class CurrencyService {
           country: curr['country'],
           dayDelta: ((curr['dayAgo'].isNotEmpty) ? curr['dayAgo'] : '0'),
           weekDelta: ((curr['weekAgo'].isNotEmpty) ? curr['weekAgo'] : '0'),
-          monthDelta:
-              ((curr['monthAgo'].isNotEmpty) ? curr['monthAgo'] : '0'),
+          monthDelta: ((curr['monthAgo'].isNotEmpty) ? curr['monthAgo'] : '0'),
           yearDelta: ((curr['yearAgo'].isNotEmpty) ? curr['yearAgo'] : '0'),
         ),
       );

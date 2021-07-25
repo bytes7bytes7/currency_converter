@@ -30,8 +30,15 @@ class Currency {
       final int secondLetter = 'DA'.codeUnitAt(1) - 0x41 + 0x1F1E6;
       return String.fromCharCode(firstLetter) + String.fromCharCode(secondLetter);
     }
-    final int firstLetter = iso!.codeUnitAt(0) - 0x41 + 0x1F1E6;
-    final int secondLetter = iso!.codeUnitAt(1) - 0x41 + 0x1F1E6;
+    int firstLetter;
+    int secondLetter;
+    if (iso == 'ANG'){
+      firstLetter = '🇨🇼'.codeUnitAt(0) - 0x41 + 0x1F1E6;
+      secondLetter = '🇨🇼'.codeUnitAt(1) - 0x41 + 0x1F1E6;
+    }else {
+      firstLetter = iso!.codeUnitAt(0) - 0x41 + 0x1F1E6;
+      secondLetter = iso!.codeUnitAt(1) - 0x41 + 0x1F1E6;
+    }
     return String.fromCharCode(firstLetter) + String.fromCharCode(secondLetter);
   }
 

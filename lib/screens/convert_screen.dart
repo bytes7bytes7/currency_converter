@@ -25,6 +25,8 @@ class ConvertScreen extends StatelessWidget {
   final TextEditingController currencyController2 =
       TextEditingController(text: '0');
   final AmountTextInputFormatter _formatter = AmountTextInputFormatter();
+  final ValueNotifier<double> currencyScrollOffset1 = ValueNotifier(0.0);
+  final ValueNotifier<double> currencyScrollOffset2 = ValueNotifier(0.0);
 
   void changeValue(String action) {
     if (currencyNotifier1.value.iso == null ||
@@ -325,6 +327,7 @@ class ConvertScreen extends StatelessWidget {
                           CurrencyInputField(
                             currencyNotifier: currencyNotifier1,
                             textEditingController: currencyController1,
+                            currencyScrollOffset: currencyScrollOffset1,
                           ),
                           IconButton(
                             icon: Icon(
@@ -337,15 +340,20 @@ class ConvertScreen extends StatelessWidget {
                                 .withOpacity(0.25),
                             splashRadius: 22.0,
                             onPressed: () {
-                              final Currency curr = currencyNotifier1.value;
+                              final Currency currency = currencyNotifier1.value;
                               currencyNotifier1.value = currencyNotifier2.value;
-                              currencyNotifier2.value = curr;
+                              currencyNotifier2.value = currency;
+                              final double offset = currencyScrollOffset1.value;
+                              currencyScrollOffset1.value = currencyScrollOffset2.value;
+                              currencyScrollOffset2.value = offset;
+                              changeValue('');
                             },
                           ),
                           CurrencyInputField(
                             enabled: false,
                             currencyNotifier: currencyNotifier2,
                             textEditingController: currencyController2,
+                            currencyScrollOffset: currencyScrollOffset2,
                           ),
                         ],
                       );

@@ -10,11 +10,13 @@ class CurrencyInputField extends StatelessWidget {
     this.enabled = true,
     required this.currencyNotifier,
     required this.textEditingController,
+    required this.currencyScrollOffset,
   }) : super(key: key);
 
   final bool enabled;
   final ValueNotifier<Currency> currencyNotifier;
   final TextEditingController textEditingController;
+  final ValueNotifier<double> currencyScrollOffset;
 
   @override
   Widget build(BuildContext context) {
@@ -44,6 +46,7 @@ class CurrencyInputField extends StatelessWidget {
               NextPageRoute(
                 nextPage: CurrencyScreen(
                   currencyNotifier: currencyNotifier,
+                  currencyScrollOffset: currencyScrollOffset,
                 ),
               ),
             );
@@ -64,7 +67,7 @@ class CurrencyInputField extends StatelessWidget {
                       width: 40,
                       height: 40,
                       child: (flag.isNotEmpty && flag.contains('.png'))
-                          ? Image.asset('assets/png/crypto/$flag')
+                          ? Image.asset('assets/png/additional_flags/$flag')
                           : RichText(
                               textAlign: TextAlign.center,
                               text: TextSpan(
