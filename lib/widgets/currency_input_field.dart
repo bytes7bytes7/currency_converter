@@ -1,8 +1,9 @@
-import 'package:currency_converter/screens/currency_screen.dart';
-import 'package:currency_converter/services/next_page_route.dart';
+import 'package:currency_converter/database/database_helper.dart';
 import 'package:flutter/material.dart';
 
 import '../models/currency.dart';
+import '../screens/currency_screen.dart';
+import '../services/next_page_route.dart';
 
 class CurrencyInputField extends StatelessWidget {
   const CurrencyInputField({
@@ -17,6 +18,11 @@ class CurrencyInputField extends StatelessWidget {
   final ValueNotifier<Currency> currencyNotifier;
   final TextEditingController textEditingController;
   final ValueNotifier<double> currencyScrollOffset;
+
+  void loadCurrencyData() async {
+    currencyNotifier.value =
+        await DatabaseHelper.db.getCurrency(currencyNotifier.value.iso!);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -58,6 +64,9 @@ class CurrencyInputField extends StatelessWidget {
             child: ValueListenableBuilder(
               valueListenable: currencyNotifier,
               builder: (context, _, __) {
+                if (currencyNotifier.value.rate == null) {
+                  loadCurrencyData();
+                }
                 String flag = currencyNotifier.value.iso != null
                     ? currencyNotifier.value.getFlag()
                     : '';

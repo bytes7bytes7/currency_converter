@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+
 import 'currency.dart';
 
 class Exchange {
@@ -5,30 +7,28 @@ class Exchange {
     this.time,
     this.leftCurrency,
     this.rightCurrency,
-    this.leftValue,
-    this.rightValue,
   });
 
   String? time;
-  Currency? leftCurrency;
-  Currency? rightCurrency;
-  double? leftValue;
-  double? rightValue;
+  ValueNotifier<Currency>? leftCurrency;
+  ValueNotifier<Currency>? rightCurrency;
+  TextEditingController leftValue = TextEditingController();
+  TextEditingController rightValue = TextEditingController();
 
   Exchange.from(Exchange other) {
     time = other.time;
-    leftCurrency = Currency.from(other.leftCurrency!);
-    rightCurrency = Currency.from(other.rightCurrency!);
-    leftValue = other.leftValue;
-    rightValue = other.rightValue;
+    leftCurrency = ValueNotifier(Currency.from(other.leftCurrency!.value));
+    rightCurrency = ValueNotifier(Currency.from(other.rightCurrency!.value));
+    leftValue.text = other.leftValue.text;
+    rightValue.text = other.rightValue.text;
   }
 
   Exchange.fromMap(Map<String, dynamic> map) {
     time = map['time'];
-    leftCurrency = Currency(iso: map['iso1']);
-    rightCurrency = Currency(iso: map['iso2']);
-    leftValue = map['value1'];
-    rightValue = map['value2'];
+    leftCurrency = ValueNotifier(Currency(iso: map['iso1']));
+    rightCurrency = ValueNotifier(Currency(iso: map['iso2']));
+    leftValue.text = map['value1'].toString().replaceAll('.', ',');
+    rightValue.text = map['value2'].toString().replaceAll('.', ',');
   }
 
   Map<String, dynamic> toMap() {

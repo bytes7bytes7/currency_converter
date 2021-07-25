@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:flutter/cupertino.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path_provider/path_provider.dart';
@@ -112,7 +113,7 @@ class DatabaseHelper {
     await _addAllCurrencies(currencies);
   }
 
-  Future<Currency?> getCurrency(String iso) async {
+  Future<Currency> getCurrency(String iso) async {
     final db = await database;
     List<Map<String, dynamic>> data = await db.query(
         ConstantDBData.currencyTableName,
@@ -120,6 +121,8 @@ class DatabaseHelper {
         whereArgs: [iso]);
     if (data.isNotEmpty) {
       return Currency.fromMap(Map<String, dynamic>.from(data.first));
+    }else{
+      return Currency();
     }
   }
 
@@ -195,8 +198,8 @@ class DatabaseHelper {
       "INSERT INTO ${ConstantDBData.historyTableName} (${ConstantDBData.time}, ${ConstantDBData.iso1}, ${ConstantDBData.iso2}, ${ConstantDBData.value1}, ${ConstantDBData.value2}) VALUES (?,?,?,?,?)",
       [
         exchange.time,
-        exchange.leftCurrency!.iso,
-        exchange.rightCurrency!.iso,
+        exchange.leftCurrency!.value.iso,
+        exchange.rightCurrency!.value.iso,
         exchange.leftValue,
         exchange.rightValue,
       ],
@@ -222,10 +225,10 @@ class DatabaseHelper {
     if (data.isNotEmpty) {
       Exchange exchange = Exchange();
       exchange.time = '${now.hour}:${now.minute} ${now.day}.${now.month}.${now.year}';
-      exchange.leftValue = null;
-      exchange.rightValue = null;
-      exchange.leftCurrency = Currency.fromMap(data[0]);
-      exchange.rightCurrency = Currency.fromMap(data[1]);
+      exchange.leftValue.text = '';
+      exchange.rightValue.text = '';
+      exchange.leftCurrency = ValueNotifier(Currency.fromMap(data[0]));
+      exchange.rightCurrency = ValueNotifier(Currency.fromMap(data[1]));
       return exchange;
     } else {
       return Exchange();
@@ -233,9 +236,9 @@ class DatabaseHelper {
   }
 
   Future<Exchange> getTwoCurrencies(Exchange exchange) async {
-    Currency? left = await getCurrency(exchange.leftCurrency!.iso!);
-    Currency? right = await getCurrency(exchange.rightCurrency!.iso!);
-    return exchange..leftCurrency=left ?? Currency()..rightCurrency=right ?? Currency();
+    Currency? left = await getCurrency(exchange.leftCurrency!.value.iso!);
+    Currency? right = await getCurrency(exchange.rightCurrency!.value.iso!);
+    return exchange..leftCurrency!.value=left..rightCurrency!.value=right;
   }
 
   Future<List<Exchange>> getAllExchanges()async{

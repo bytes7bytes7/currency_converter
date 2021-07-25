@@ -3,10 +3,8 @@ import '../database/database_helper.dart';
 
 abstract class ExchangeRepository {
   static Future<Exchange> _getCurrenciesInfo(Exchange exchange) async {
-    exchange.leftCurrency =
-        await DatabaseHelper.db.getCurrency(exchange.leftCurrency!.iso!);
-    exchange.rightCurrency =
-        await DatabaseHelper.db.getCurrency(exchange.rightCurrency!.iso!);
+    exchange.leftCurrency!.value= await DatabaseHelper.db.getCurrency(exchange.leftCurrency!.value.iso!);
+    exchange.rightCurrency!.value = await DatabaseHelper.db.getCurrency(exchange.rightCurrency!.value.iso!);
     return exchange;
   }
 
@@ -17,8 +15,8 @@ abstract class ExchangeRepository {
 
   static Future<Exchange> getLastTwoCurrencies() async {
     Exchange exchange = await DatabaseHelper.db.getLastExchange();
-    exchange.leftValue = null;
-    exchange.rightValue = null;
+    exchange.leftValue.text = '';
+    exchange.rightValue.text = '';
     return await _getCurrenciesInfo(exchange);
   }
 

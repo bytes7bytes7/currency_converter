@@ -21,35 +21,34 @@ class ConvertScreen extends StatelessWidget {
     Key? key,
   }) : super(key: key);
 
-  final ValueNotifier<Currency> currencyNotifier1 = ValueNotifier(Currency());
-  final ValueNotifier<Currency> currencyNotifier2 = ValueNotifier(Currency());
-  final TextEditingController currencyController1 = TextEditingController();
-  final TextEditingController currencyController2 =
-      TextEditingController(text: '0');
+  final ValueNotifier<Exchange> exchangeNotifier = ValueNotifier(Exchange(
+    leftCurrency: ValueNotifier(Currency()),
+    rightCurrency: ValueNotifier(Currency()),
+  ));
   final AmountTextInputFormatter _formatter = AmountTextInputFormatter();
   final ValueNotifier<double> currencyScrollOffset1 = ValueNotifier(0.0);
   final ValueNotifier<double> currencyScrollOffset2 = ValueNotifier(0.0);
 
   void changeValue(String action) {
-    if (currencyNotifier1.value.iso == null ||
-        currencyNotifier2.value.iso == null) {
+    if (exchangeNotifier.value.leftCurrency!.value.iso == null ||
+        exchangeNotifier.value.rightCurrency!.value.iso == null) {
       return;
     }
     if (action == 'erase') {
-      if (currencyController1.value.selection.end != 0 &&
-          currencyController1.value.text.isNotEmpty) {
-        final oldValue = currencyController1.value;
-        final tmp = currencyController1.value.text.split('');
-        if (currencyController1.value.selection.end == -1) {
-          tmp.removeAt(currencyController1.value.text.length - 1);
+      if (exchangeNotifier.value.leftValue.selection.end != 0 &&
+          exchangeNotifier.value.leftValue.text.isNotEmpty) {
+        final oldValue = exchangeNotifier.value.leftValue.value;
+        final tmp = exchangeNotifier.value.leftValue.text.split('');
+        if (exchangeNotifier.value.leftValue.selection.end == -1) {
+          tmp.removeAt(exchangeNotifier.value.leftValue.text.length - 1);
         } else {
-          tmp.removeAt(currencyController1.value.selection.end - 1);
+          tmp.removeAt(exchangeNotifier.value.leftValue.selection.end - 1);
         }
         int offset;
-        if (currencyController1.value.selection.end == -1) {
+        if (exchangeNotifier.value.leftValue.selection.end == -1) {
           offset = -1;
         } else {
-          offset = currencyController1.value.selection.end - 1;
+          offset = exchangeNotifier.value.leftValue.selection.end - 1;
         }
         TextEditingValue newValue = TextEditingValue(
           text: tmp.join(''),
@@ -58,22 +57,22 @@ class ConvertScreen extends StatelessWidget {
             extentOffset: offset,
           ),
         );
-        currencyController1.value =
+        exchangeNotifier.value.leftValue.value =
             _formatter.formatEditUpdate(oldValue, newValue);
       }
     } else {
-      TextEditingValue oldValue = currencyController1.value;
-      final tmp = currencyController1.text.split('');
-      if (currencyController1.selection.end == -1) {
-        tmp.insert(currencyController1.text.length, action);
+      TextEditingValue oldValue = exchangeNotifier.value.leftValue.value;
+      final tmp = exchangeNotifier.value.leftValue.text.split('');
+      if (exchangeNotifier.value.leftValue.selection.end == -1) {
+        tmp.insert(exchangeNotifier.value.leftValue.text.length, action);
       } else {
-        tmp.insert(currencyController1.selection.end, action);
+        tmp.insert(exchangeNotifier.value.leftValue.selection.end, action);
       }
-      int offset = currencyController1.selection.end;
-      if (currencyController1.selection.end == -1) {
+      int offset = exchangeNotifier.value.leftValue.selection.end;
+      if (exchangeNotifier.value.leftValue.selection.end == -1) {
         offset = -1;
       } else if (action.isNotEmpty) {
-        offset = currencyController1.selection.end + 1;
+        offset = exchangeNotifier.value.leftValue.selection.end + 1;
       }
       TextEditingValue newValue = TextEditingValue(
         text: tmp.join(''),
@@ -82,18 +81,19 @@ class ConvertScreen extends StatelessWidget {
           extentOffset: offset,
         ),
       );
-      currencyController1.value =
+      exchangeNotifier.value.leftValue.value =
           _formatter.formatEditUpdate(oldValue, newValue);
     }
     final TextEditingValue oldValue = TextEditingValue(
-      text: currencyController2.text,
+      text: exchangeNotifier.value.rightValue.text,
     );
-    final String currText1 =
-        currencyController1.text.replaceAll(',', '.').replaceAll(' ', '');
+    final String currText1 = exchangeNotifier.value.leftValue.text
+        .replaceAll(',', '.')
+        .replaceAll(' ', '');
     if (currText1.isNotEmpty) {
       double v = (double.parse(currText1) *
-          currencyNotifier2.value.rate! /
-          currencyNotifier1.value.rate!);
+          exchangeNotifier.value.rightCurrency!.value.rate! /
+          exchangeNotifier.value.leftCurrency!.value.rate!);
       TextEditingValue newValue;
       if (v.toInt() == 0) {
         newValue = TextEditingValue(
@@ -104,24 +104,25 @@ class ConvertScreen extends StatelessWidget {
           text: v.toStringAsFixed(2).replaceAll('.', ','),
         );
       }
-      currencyController2.text =
+      exchangeNotifier.value.rightValue.text =
           _formatter.formatEditUpdate(oldValue, newValue).text;
     } else {
-      currencyController2.text = '';
+      exchangeNotifier.value.rightValue.text = '';
     }
   }
 
   void clearField() {
-    currencyController1.text = '';
-    currencyController2.text = '';
-    currencyController1.text = '';
+    exchangeNotifier.value.leftValue.text = '';
+    exchangeNotifier.value.rightValue.text = '';
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      appBar: const _AppBar(),
+      appBar: _AppBar(
+        exchangeNotifier: exchangeNotifier,
+      ),
       body: SafeArea(
         child: Center(
           child: Padding(
@@ -160,8 +161,10 @@ class ConvertScreen extends StatelessWidget {
                     } else if (snapshot.data is InfoLoadingState) {
                       return const LoadingLabel();
                     } else if (snapshot.data is InfoDataState) {
-                      if (currencyNotifier1.value.iso == null ||
-                          currencyNotifier2.value.iso == null) {
+                      if (exchangeNotifier.value.leftCurrency!.value.iso ==
+                              null ||
+                          exchangeNotifier.value.rightCurrency!.value.iso ==
+                              null) {
                         ExchangeBloc.getFirstTwoCurrencies();
                       } else {
                         ExchangeBloc.updateCalculation();
@@ -187,8 +190,7 @@ class ConvertScreen extends StatelessWidget {
                           }
                           updated = '$day.$month.${date[4]}';
                         } else if (date[3] != now.month || date[2] != now.day) {
-                          updated =
-                              '${date[2]} ${ConstantData.month[date[3]]}';
+                          updated = '${date[2]} ${ConstantData.month[date[3]]}';
                         } else {
                           String hour = date[0].toString();
                           if (hour.length < 2) {
@@ -223,22 +225,27 @@ class ConvertScreen extends StatelessWidget {
                           ),
                           onPressed: () {
                             if (snapshot.data is! InfoLoadingState) {
-                              String left = currencyController1.text;
-                              String right = currencyController2.text;
+                              String left =
+                                  exchangeNotifier.value.leftValue.text;
+                              String right =
+                                  exchangeNotifier.value.rightValue.text;
                               DateTime now = DateTime.now();
                               CurrencyBloc.updateCurrencies().then((_) {
                                 ExchangeBloc.updateExchange(Exchange(
                                   time:
                                       '${now.hour}:${now.minute} ${now.day}.${now.month}.${now.year}',
-                                  leftCurrency: currencyNotifier1.value,
-                                  rightCurrency: currencyNotifier2.value,
-                                  leftValue: double.parse(left
-                                      .replaceAll(',', '.')
-                                      .replaceAll(' ', '')),
-                                  rightValue: double.parse(right
-                                      .replaceAll(',', '.')
-                                      .replaceAll(' ', '')),
-                                )).then((_) {
+                                  leftCurrency:
+                                      exchangeNotifier.value.leftCurrency,
+                                  rightCurrency:
+                                      exchangeNotifier.value.rightCurrency,
+                                )
+                                      ..leftValue.text = left
+                                          .replaceAll(',', '.')
+                                          .replaceAll(' ', '')
+                                      ..rightValue.text = right
+                                          .replaceAll(',', '.')
+                                          .replaceAll(' ', ''))
+                                    .then((_) {
                                   changeValue('');
                                 });
                               });
@@ -309,14 +316,14 @@ class ConvertScreen extends StatelessWidget {
                             ),
                           );
                         } else {
-                          currencyNotifier1.value =
+                          exchangeNotifier.value.leftCurrency =
                               state.exchange.leftCurrency!;
-                          currencyNotifier2.value =
+                          exchangeNotifier.value.rightCurrency =
                               state.exchange.rightCurrency!;
-                          currencyController1.text =
-                              state.exchange.leftValue?.toString() ?? '';
-                          currencyController2.text =
-                              state.exchange.rightValue?.toString() ?? '';
+                          exchangeNotifier.value.leftValue.text =
+                              state.exchange.leftValue.text;
+                          exchangeNotifier.value.rightValue.text =
+                              state.exchange.rightValue.text;
                         }
                       } else {
                         changeValue('');
@@ -324,8 +331,10 @@ class ConvertScreen extends StatelessWidget {
                       return Column(
                         children: [
                           CurrencyInputField(
-                            currencyNotifier: currencyNotifier1,
-                            textEditingController: currencyController1,
+                            currencyNotifier:
+                                exchangeNotifier.value.leftCurrency!,
+                            textEditingController:
+                                exchangeNotifier.value.leftValue,
                             currencyScrollOffset: currencyScrollOffset1,
                           ),
                           IconButton(
@@ -339,9 +348,12 @@ class ConvertScreen extends StatelessWidget {
                                 .withOpacity(0.25),
                             splashRadius: 22.0,
                             onPressed: () {
-                              final Currency currency = currencyNotifier1.value;
-                              currencyNotifier1.value = currencyNotifier2.value;
-                              currencyNotifier2.value = currency;
+                              final Currency currency =
+                                  exchangeNotifier.value.leftCurrency!.value;
+                              exchangeNotifier.value.leftCurrency!.value =
+                                  exchangeNotifier.value.rightCurrency!.value;
+                              exchangeNotifier.value.rightCurrency!.value =
+                                  currency;
                               final double offset = currencyScrollOffset1.value;
                               currencyScrollOffset1.value =
                                   currencyScrollOffset2.value;
@@ -351,8 +363,10 @@ class ConvertScreen extends StatelessWidget {
                           ),
                           CurrencyInputField(
                             enabled: false,
-                            currencyNotifier: currencyNotifier2,
-                            textEditingController: currencyController2,
+                            currencyNotifier:
+                                exchangeNotifier.value.rightCurrency!,
+                            textEditingController:
+                                exchangeNotifier.value.rightValue,
                             currencyScrollOffset: currencyScrollOffset2,
                           ),
                         ],
@@ -384,10 +398,13 @@ class ConvertScreen extends StatelessWidget {
 class _AppBar extends StatelessWidget implements PreferredSizeWidget {
   const _AppBar({
     Key? key,
+    required this.exchangeNotifier,
   }) : super(key: key);
 
   @override
   Size get preferredSize => const Size.fromHeight(60.0);
+
+  final ValueNotifier<Exchange> exchangeNotifier;
 
   @override
   Widget build(BuildContext context) {
@@ -429,11 +446,11 @@ class _AppBar extends StatelessWidget implements PreferredSizeWidget {
             HistoryBloc.addExchange(Exchange(
               time:
                   '${now.hour}:${now.minute} ${now.day}.${now.month}.${now.year}',
-              leftCurrency: Currency(iso: 'RUB'),
-              rightCurrency: Currency(iso: 'BRL'),
-              leftValue: 100.0,
-              rightValue: 7.04,
-            ));
+              leftCurrency: ValueNotifier(Currency(iso: 'RUB')),
+              rightCurrency: ValueNotifier(Currency(iso: 'BRL')),
+            )
+              ..leftValue.text = '100'
+              ..rightValue.text = '7.04');
           },
         ),
         IconButton(
@@ -448,7 +465,9 @@ class _AppBar extends StatelessWidget implements PreferredSizeWidget {
             Navigator.push(
               context,
               NextPageRoute(
-                nextPage: const HistoryScreen(),
+                nextPage: HistoryScreen(
+                  exchangeNotifier: exchangeNotifier,
+                ),
               ),
             );
           },

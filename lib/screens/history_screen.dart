@@ -1,6 +1,6 @@
-import 'package:currency_converter/models/exchange.dart';
 import 'package:flutter/material.dart';
 
+import '../models/exchange.dart';
 import '../bloc/history_bloc.dart';
 import '../constants.dart';
 import '../widgets/loading_circle.dart';
@@ -8,7 +8,10 @@ import '../widgets/loading_circle.dart';
 class HistoryScreen extends StatelessWidget {
   const HistoryScreen({
     Key? key,
+    required this.exchangeNotifier,
   }) : super(key: key);
+
+  final ValueNotifier<Exchange> exchangeNotifier;
 
   @override
   Widget build(BuildContext context) {
@@ -44,6 +47,7 @@ class HistoryScreen extends StatelessWidget {
                 }
                 return _HistoryList(
                   exchanges: state.exchanges,
+                  exchangeNotifier: exchangeNotifier,
                 );
               } else {
                 return const SizedBox.shrink();
@@ -105,9 +109,11 @@ class _HistoryList extends StatelessWidget {
   const _HistoryList({
     Key? key,
     required this.exchanges,
+    required this.exchangeNotifier,
   }) : super(key: key);
 
   final List<Exchange> exchanges;
+  final ValueNotifier<Exchange> exchangeNotifier;
 
   @override
   Widget build(BuildContext context) {
@@ -157,20 +163,26 @@ class _HistoryList extends StatelessWidget {
             }
             time = '$hour:$minute';
           }
-          String leftFlag = exchanges[index].leftCurrency!.iso != null
-              ? exchanges[index].leftCurrency!.getFlag()
+          String leftFlag = exchanges[index].leftCurrency!.value.iso != null
+              ? exchanges[index].leftCurrency!.value.getFlag()
               : '';
-          String rightFlag = exchanges[index].rightCurrency!.iso != null
-              ? exchanges[index].rightCurrency!.getFlag()
+          String rightFlag = exchanges[index].rightCurrency!.value.iso != null
+              ? exchanges[index].rightCurrency!.value.getFlag()
               : '';
-          String leftValue = exchanges[index].leftValue?.toString() ?? '0';
-          if (double.parse(leftValue) == double.parse(leftValue).toInt()) {
-            leftValue = leftValue.substring(0, leftValue.indexOf('.'));
+          String leftValue = exchanges[index].leftValue.text;
+          if (leftValue.isEmpty) {
+            leftValue = '0';
+          }
+          if (double.parse(leftValue.replaceAll(',', '.')) == double.parse(leftValue.replaceAll(',', '.')).toInt()) {
+            leftValue = leftValue.substring(0, leftValue.indexOf(','));
           }
           leftValue = leftValue.replaceAll('.', ',');
-          String rightValue = exchanges[index].rightValue?.toString() ?? '0';
-          if (double.parse(rightValue) == double.parse(rightValue).toInt()) {
-            rightValue = rightValue.substring(0, rightValue.indexOf('.'));
+          String rightValue = exchanges[index].rightValue.text;
+          if (rightValue.isEmpty) {
+            rightValue = '0';
+          }
+          if (double.parse(rightValue.replaceAll(',', '.')) == double.parse(rightValue.replaceAll(',', '.')).toInt()) {
+            rightValue = rightValue.substring(0, rightValue.indexOf(','));
           }
           rightValue = rightValue.replaceAll('.', ',');
           return Container(
@@ -179,6 +191,11 @@ class _HistoryList extends StatelessWidget {
             child: RawMaterialButton(
               padding: const EdgeInsets.all(0),
               onPressed: () {
+                exchangeNotifier.value
+                  ..leftValue.value = exchanges[index].leftValue.value
+                  ..rightValue.value = exchanges[index].rightValue.value
+                  ..leftCurrency!.value = exchanges[index].leftCurrency!.value
+                  ..rightCurrency!.value = exchanges[index].rightCurrency!.value;
                 Navigator.pop(context);
               },
               child: Column(
@@ -209,7 +226,7 @@ class _HistoryList extends StatelessWidget {
                       ),
                       const SizedBox(width: 5),
                       Text(
-                        exchanges[index].leftCurrency!.iso ?? '',
+                        exchanges[index].leftCurrency!.value.iso ?? '',
                         style: Theme.of(context).textTheme.subtitle2,
                       ),
                       Expanded(
@@ -242,7 +259,7 @@ class _HistoryList extends StatelessWidget {
                       ),
                       const SizedBox(width: 5),
                       Text(
-                        exchanges[index].rightCurrency!.iso ?? '',
+                        exchanges[index].rightCurrency!.value.iso ?? '',
                         style: Theme.of(context).textTheme.subtitle2,
                       ),
                       const SizedBox(width: 30.0),
