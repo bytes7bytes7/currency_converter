@@ -1,3 +1,4 @@
+import 'package:currency_converter/models/setting.dart';
 import 'package:flutter/material.dart';
 
 abstract class ConstantColors {
@@ -48,6 +49,7 @@ abstract class ConstantDBData {
   static const String currencyTableName = 'currency';
   static const String infoTableName = 'info';
   static const String historyTableName = 'history';
+  static const String settingsTableName = 'settings';
 
   static const String unknown = '???';
 
@@ -74,4 +76,42 @@ abstract class ConstantDBData {
   static const String iso2 = 'iso2';
   static const String value1 = 'value1';
   static const String value2 = 'value2';
+
+  // settingsTable
+  static const String title = 'title';
+  static const String subtitle = 'subtitle';
+  static const String icon = 'icon';
+
+  static final List<Setting> defaultSettings = [
+    Setting(
+      title: 'Ночной режим',
+      subtitle: 'Темная тема',
+      value: 'false',
+      icon: 'dark_mode_outlined',
+    ),
+    Setting(
+      title: 'Сохранение валют',
+      subtitle: 'Сохранение выбранных валют при выходе',
+      value: 'false',
+      icon: 'save_alt_outlined',
+    ),
+    Setting(
+      title: 'Автообновление',
+      subtitle: 'Обновление курса валют при входе',
+      value: 'false',
+      icon: 'update_outlined',
+    ),
+    Setting(
+      title: 'Сохранение состояния',
+      subtitle: 'Сохранение последнего расчета при выходе',
+      value: 'false',
+      icon: 'save',
+    ),
+    Setting(
+      title: 'Удаление истории',
+      subtitle: 'Автоматическое удаление истории через время',
+      value: '',
+      icon: 'auto_delete_outlined',
+    ),
+  ];
 }

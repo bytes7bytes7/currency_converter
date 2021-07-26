@@ -1,4 +1,5 @@
 import 'package:currency_converter/bloc/exchange_bloc.dart';
+import 'package:currency_converter/widgets/search_bar.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
@@ -15,7 +16,7 @@ List<Currency> search(Map<String, dynamic> map) {
   for (int i = 0; i < map['allCurrencies'].length; i++) {
     if (map['allCurrencies'][i].iso!.toLowerCase().contains(formattedValue) ||
         map['allCurrencies'][i].name!.toLowerCase().contains(formattedValue)) {
-      currencies.add(map['allCurrencies'][i]);
+      currencies.add(Currency.from(map['allCurrencies'][i]));
     }
   }
   return currencies;
@@ -49,7 +50,9 @@ class CurrencyScreen extends StatelessWidget {
 
   Future<List<Currency>> computeData(String value) async {
     return await compute(
-        search, {'value': value, 'allCurrencies': allCurrencies});
+      search,
+      {'value': value, 'allCurrencies': allCurrencies},
+    );
   }
 
   @override
@@ -81,82 +84,93 @@ class CurrencyScreen extends StatelessWidget {
                   CurrencyDataState state = snapshot.data as CurrencyDataState;
                   allCurrencies.clear();
                   allCurrencies.addAll(state.currencies);
-                  searchCurrencies.value.addAll(allCurrencies);
+                  searchCurrencies.value = List.from(allCurrencies);
+                  // return GestureDetector(
+                  //   onTap: () {
+                  //     showSearch(
+                  //       context: context,
+                  //       delegate: SearchBar(),
+                  //     );
+                  //   },
+                  //   child: Container(
+                  //     color: Colors.green,
+                  //     height: 10,
+                  //     width: 10,
+                  //   ),
+                  // );
                   return FutureBuilder(
-                      future: computeFuture.value,
-                      builder: (futureContext, futureSnapshot) {
-                        return Column(
-                          children: [
-                            Container(
-                              margin: const EdgeInsets.only(
-                                top: 26.0,
-                                left: 30.0,
-                                right: 30.0,
-                              ),
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 14.0),
-                              width: double.infinity,
-                              height: 42.0,
-                              decoration: BoxDecoration(
-                                color: Theme.of(context)
-                                    .disabledColor
-                                    .withOpacity(0.25),
-                                borderRadius: BorderRadius.circular(12.0),
-                              ),
-                              child: Row(
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.only(right: 14.0),
-                                    child: Icon(
-                                      Icons.search_outlined,
-                                      color: Theme.of(context).disabledColor,
-                                      size: 24.0,
-                                    ),
-                                  ),
-                                  Expanded(
-                                    child: TextField(
-                                      controller: searchController,
-                                      style:
-                                          Theme.of(context).textTheme.bodyText2,
-                                      scrollPhysics:
-                                          const BouncingScrollPhysics(),
-                                      onChanged: (value) {
-                                        var callback = createComputeCallback(
-                                            futureContext,
-                                            futureSnapshot,
-                                            value);
-                                        if (callback != null) {
-                                          callback();
-                                        }
-                                      },
-                                      decoration: InputDecoration(
-                                        hintText: 'Поиск',
-                                        hintStyle: Theme.of(context)
-                                            .textTheme
-                                            .subtitle1,
-                                        border: InputBorder.none,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
+                    future: computeFuture.value,
+                    builder: (futureContext, futureSnapshot) {
+                      return Column(
+                        children: [
+                          Container(
+                            margin: const EdgeInsets.only(
+                              top: 26.0,
+                              left: 30.0,
+                              right: 30.0,
                             ),
-                            (futureSnapshot.connectionState ==
-                                    ConnectionState.waiting)
-                                ? const SizedBox(
-                                    height: 50.0,
-                                    width: 50.0,
-                                    child: LoadingCircle(),
-                                  )
-                                : _CurrencyList(
-                                    searchCurrencies: searchCurrencies,
-                                    currencyScrollOffset: currencyScrollOffset,
-                                    allCurrencies: allCurrencies,
-                                    currencyNotifier: currencyNotifier,
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 14.0),
+                            width: double.infinity,
+                            height: 42.0,
+                            decoration: BoxDecoration(
+                              color: Theme.of(context)
+                                  .disabledColor
+                                  .withOpacity(0.25),
+                              borderRadius: BorderRadius.circular(12.0),
+                            ),
+                            child: Row(
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.only(right: 14.0),
+                                  child: Icon(
+                                    Icons.search_outlined,
+                                    color: Theme.of(context).disabledColor,
+                                    size: 24.0,
                                   ),
-                          ],
-                        );
-                      });
+                                ),
+                                Expanded(
+                                  child: TextField(
+                                    controller: searchController,
+                                    style:
+                                        Theme.of(context).textTheme.bodyText2,
+                                    scrollPhysics:
+                                        const BouncingScrollPhysics(),
+                                    onChanged: (value) {
+                                      var callback = createComputeCallback(
+                                          futureContext, futureSnapshot, value);
+                                      if (callback != null) {
+                                        callback();
+                                      }
+                                    },
+                                    decoration: InputDecoration(
+                                      hintText: 'Поиск',
+                                      hintStyle:
+                                          Theme.of(context).textTheme.subtitle1,
+                                      border: InputBorder.none,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          (futureSnapshot.connectionState ==
+                                  ConnectionState.waiting)
+                              ? const SizedBox(
+                                  height: 50.0,
+                                  width: 50.0,
+                                  child: LoadingCircle(),
+                                )
+                              : _CurrencyList(
+                                  searchCurrencies: searchCurrencies,
+                                  currencyScrollOffset: currencyScrollOffset,
+                                  allCurrencies: allCurrencies,
+                                  currencyNotifier: currencyNotifier,
+                                ),
+                        ],
+                      );
+                    },
+                  );
                 } else {
                   return const SizedBox.shrink();
                 }
@@ -306,8 +320,8 @@ class _CurrencyList extends StatelessWidget {
   }
 
   void onPressed(BuildContext context, int index) {
-    int i = allCurrencies.indexWhere(
-            (e) => e.iso == searchCurrencies.value[index].iso);
+    int i = allCurrencies
+        .indexWhere((e) => e.iso == searchCurrencies.value[index].iso);
     currencyScrollOffset.value = i * 80.0 + i - 40.0;
     currencyNotifier.value = searchCurrencies.value[index];
     ExchangeBloc.updateCalculation();
@@ -389,7 +403,7 @@ class _CurrencyList extends StatelessWidget {
                               style: Theme.of(context).textTheme.bodyText2,
                               maxLines: 1,
                               readOnly: true,
-                              onTap: (){
+                              onTap: () {
                                 onPressed(context, index);
                               },
                               decoration: const InputDecoration(

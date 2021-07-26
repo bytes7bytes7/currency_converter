@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:currency_converter/models/setting.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
@@ -57,6 +58,14 @@ class DatabaseHelper {
         ${ConstantDBData.value2} REAL
       )
     ''');
+    await db.execute('''
+      CREATE TABLE IF NOT EXISTS ${ConstantDBData.settingsTableName} (
+        ${ConstantDBData.title} TEXT PRIMARY KEY,
+        ${ConstantDBData.subtitle} TEXT,
+        ${ConstantDBData.value} TEXT,
+        ${ConstantDBData.icon} TEXT
+      )
+    ''');
   }
 
   Future dropDB(String dbName) async {
@@ -72,11 +81,25 @@ class DatabaseHelper {
         await db.execute('REINDEX ${ConstantDBData.infoTableName};');
         await db.execute('VACUUM;');
         break;
+      case ConstantDBData.historyTableName:
+        await db.execute('DELETE FROM ${ConstantDBData.historyTableName};');
+        await db.execute('REINDEX ${ConstantDBData.historyTableName};');
+        await db.execute('VACUUM;');
+        break;
+      case ConstantDBData.settingsTableName:
+        await db.execute('DELETE FROM ${ConstantDBData.settingsTableName};');
+        await db.execute('REINDEX ${ConstantDBData.settingsTableName};');
+        await db.execute('VACUUM;');
+        break;
       default:
         await db.execute(
             'DROP TABLE IF EXISTS ${ConstantDBData.currencyTableName};');
         await db
             .execute('DROP TABLE IF EXISTS ${ConstantDBData.infoTableName};');
+        await db.execute(
+            'DROP TABLE IF EXISTS ${ConstantDBData.historyTableName};');
+        await db.execute(
+            'DROP TABLE IF EXISTS ${ConstantDBData.settingsTableName};');
         await _createDB(db, ConstantDBData.databaseVersion);
     }
   }
@@ -167,22 +190,24 @@ class DatabaseHelper {
       _addInfo(key, value);
     } else {
       await db.update(
-          ConstantDBData.infoTableName,
-          {
-            ConstantDBData.key: key,
-            ConstantDBData.value: value,
-          },
-          where: "${ConstantDBData.key} = ?",
-          whereArgs: [key]);
+        ConstantDBData.infoTableName,
+        {
+          ConstantDBData.key: key,
+          ConstantDBData.value: value,
+        },
+        where: "${ConstantDBData.key} = ?",
+        whereArgs: [key],
+      );
     }
   }
 
   Future<String> getInfo(String key) async {
     final db = await database;
     List<Map<String, dynamic>> data = await db.query(
-        ConstantDBData.infoTableName,
-        where: "${ConstantDBData.key} = ?",
-        whereArgs: [key]);
+      ConstantDBData.infoTableName,
+      where: "${ConstantDBData.key} = ?",
+      whereArgs: [key],
+    );
     if (data.isNotEmpty) {
       return Map<String, dynamic>.from(data.first)['value'];
     } else {
@@ -257,5 +282,59 @@ class DatabaseHelper {
   Future<void> deleteAllExchanges() async {
     final db = await database;
     db.rawDelete("DELETE FROM ${ConstantDBData.historyTableName}");
+  }
+
+  // Setting methods
+  Future _addSettings(List<Setting> settings) async {
+    final db = await database;
+    for (var setting in settings) {
+      await db.rawInsert(
+        "INSERT INTO ${ConstantDBData.settingsTableName} (${ConstantDBData.title}, ${ConstantDBData.subtitle}, ${ConstantDBData.value}, ${ConstantDBData.icon}) VALUES (?,?,?,?)",
+        [
+          setting.title,
+          setting.subtitle,
+          setting.value,
+          setting.icon,
+        ],
+      );
+    }
+  }
+
+  Future<List<Setting>> addDefaultSettings()async{
+    await _addSettings(ConstantDBData.defaultSettings);
+    return ConstantDBData.defaultSettings;
+  }
+
+  Future updateSettings(List<Setting> settings) async {
+    final db = await database;
+    List<Setting> oldValue = await getSettings();
+    if (oldValue.isEmpty) {
+      _addSettings(settings);
+    } else {
+      for (var setting in settings) {
+        await db.update(
+          ConstantDBData.settingsTableName,
+          {
+            ConstantDBData.title: setting.title,
+            ConstantDBData.subtitle: setting.subtitle,
+            ConstantDBData.value: setting.value,
+            ConstantDBData.icon: setting.icon,
+          },
+          where: "${ConstantDBData.title} = ?",
+          whereArgs: [setting.title],
+        );
+      }
+    }
+  }
+
+  Future<List<Setting>> getSettings() async {
+    final db = await database;
+    List<Map<String, dynamic>> data =
+        await db.query(ConstantDBData.settingsTableName);
+    if (data.isNotEmpty) {
+      return data.map((e) => Setting.fromMap(e)).toList();
+    } else {
+      return <Setting>[];
+    }
   }
 }
