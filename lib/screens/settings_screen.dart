@@ -85,7 +85,7 @@ class _AppBar extends StatelessWidget implements PreferredSizeWidget {
           List<Setting> settings = List.from(data.keys);
           List<ValueNotifier<dynamic>> notifiers = List.from(data.values);
           for (int i = 0; i < settings.length; i++) {
-            settings[i].value = '${notifiers[i].value}';
+            settings[i].value = notifiers[i].value.toString();
           }
           SettingBloc.updateSettings(settings);
           Navigator.pop(context);
