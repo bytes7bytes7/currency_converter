@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'themes/light_theme.dart';
-import 'screens/convert_screen.dart';
+import 'screens/main_screen.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -21,7 +21,8 @@ class MyApp extends StatelessWidget {
       title: 'Currency Converter',
       theme: lightTheme,
       debugShowCheckedModeBanner: false,
-      home: ConvertScreen(),
+      // home: ConvertScreen(),
+      home:const MainScreen(),
     );
   }
 }

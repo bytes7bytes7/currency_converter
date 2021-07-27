@@ -1,3 +1,4 @@
+import 'package:currency_converter/global_parameters.dart';
 import 'package:flutter/material.dart';
 
 import '../models/exchange.dart';
@@ -8,10 +9,7 @@ import '../widgets/loading_circle.dart';
 class HistoryScreen extends StatelessWidget {
   const HistoryScreen({
     Key? key,
-    required this.exchangeNotifier,
   }) : super(key: key);
-
-  final ValueNotifier<Exchange> exchangeNotifier;
 
   @override
   Widget build(BuildContext context) {
@@ -47,7 +45,6 @@ class HistoryScreen extends StatelessWidget {
                 }
                 return _HistoryList(
                   exchanges: state.exchanges,
-                  exchangeNotifier: exchangeNotifier,
                 );
               } else {
                 return const SizedBox.shrink();
@@ -81,7 +78,11 @@ class _AppBar extends StatelessWidget implements PreferredSizeWidget {
         splashColor: Theme.of(context).disabledColor.withOpacity(0.25),
         splashRadius: 22.0,
         onPressed: () {
-          Navigator.pop(context);
+          GlobalParameters.screenController.animateToPage(
+            1,
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeInOut,
+          );
         },
       ),
       centerTitle: true,
@@ -111,14 +112,12 @@ class _HistoryList extends StatelessWidget {
   const _HistoryList({
     Key? key,
     required this.exchanges,
-    required this.exchangeNotifier,
   }) : super(key: key);
 
   final List<Exchange> exchanges;
-  final ValueNotifier<Exchange> exchangeNotifier;
 
   void onPressed(BuildContext context, int index) {
-    exchangeNotifier.value
+    GlobalParameters.exchangeNotifier.value
       ..leftValue.value = exchanges[index].leftValue.value
       ..rightValue.value = exchanges[index].rightValue.value
       ..leftCurrency!.value = exchanges[index].leftCurrency!.value

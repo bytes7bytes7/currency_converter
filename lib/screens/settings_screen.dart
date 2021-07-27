@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../global_parameters.dart';
 import '../widgets/loading_circle.dart';
 import '../bloc/setting_bloc.dart';
 import '../models/setting.dart';
@@ -73,24 +74,30 @@ class _AppBar extends StatelessWidget implements PreferredSizeWidget {
   Widget build(BuildContext context) {
     return AppBar(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      leading: IconButton(
-        icon: Icon(
-          Icons.arrow_back_ios_outlined,
-          size: 28.0,
-          color: Theme.of(context).focusColor,
+      actions: [
+        IconButton(
+          icon: Icon(
+            Icons.arrow_forward_ios_outlined,
+            size: 28.0,
+            color: Theme.of(context).focusColor,
+          ),
+          splashColor: Theme.of(context).disabledColor.withOpacity(0.25),
+          splashRadius: 22.0,
+          onPressed: () {
+            List<Setting> settings = List.from(data.keys);
+            List<ValueNotifier<dynamic>> notifiers = List.from(data.values);
+            for (int i = 0; i < settings.length; i++) {
+              settings[i].value = notifiers[i].value.toString();
+            }
+            SettingBloc.updateSettings(settings);
+            GlobalParameters.screenController.animateToPage(
+              1,
+              duration: const Duration(milliseconds: 300),
+              curve: Curves.easeInOut,
+            );
+          },
         ),
-        splashColor: Theme.of(context).disabledColor.withOpacity(0.25),
-        splashRadius: 22.0,
-        onPressed: () {
-          List<Setting> settings = List.from(data.keys);
-          List<ValueNotifier<dynamic>> notifiers = List.from(data.values);
-          for (int i = 0; i < settings.length; i++) {
-            settings[i].value = notifiers[i].value.toString();
-          }
-          SettingBloc.updateSettings(settings);
-          Navigator.pop(context);
-        },
-      ),
+      ],
       centerTitle: true,
       title: Text(
         'Настройки',
