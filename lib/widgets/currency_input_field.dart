@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 
 import '../models/currency.dart';
 import '../screens/currency_screen.dart';
-import '../services/next_page_route.dart';
 
 class CurrencyInputField extends StatelessWidget {
   const CurrencyInputField({
@@ -51,8 +50,8 @@ class CurrencyInputField extends StatelessWidget {
           onPressed: () {
             Navigator.push(
               context,
-              NextPageRoute(
-                nextPage: CurrencyScreen(
+              MaterialPageRoute(
+                builder: (context) => CurrencyScreen(
                   currencyNotifier: currencyNotifier,
                   currencyScrollOffset: currencyScrollOffset,
                 ),
@@ -66,7 +65,7 @@ class CurrencyInputField extends StatelessWidget {
             child: ValueListenableBuilder(
               valueListenable: currencyNotifier,
               builder: (context, _, __) {
-                if(textEditingController.text.isNotEmpty && enabled){
+                if (textEditingController.text.isNotEmpty && enabled) {
                   addToHistory();
                 }
                 if (currencyNotifier.value.rate == null) {

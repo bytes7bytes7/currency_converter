@@ -74,30 +74,28 @@ class _AppBar extends StatelessWidget implements PreferredSizeWidget {
   Widget build(BuildContext context) {
     return AppBar(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      actions: [
-        IconButton(
-          icon: Icon(
-            Icons.arrow_forward_ios_outlined,
-            size: 28.0,
-            color: Theme.of(context).focusColor,
-          ),
-          splashColor: Theme.of(context).disabledColor.withOpacity(0.25),
-          splashRadius: 22.0,
-          onPressed: () {
-            List<Setting> settings = List.from(data.keys);
-            List<ValueNotifier<dynamic>> notifiers = List.from(data.values);
-            for (int i = 0; i < settings.length; i++) {
-              settings[i].value = notifiers[i].value.toString();
-            }
-            SettingBloc.updateSettings(settings);
-            GlobalParameters.screenController.animateToPage(
-              1,
-              duration: const Duration(milliseconds: 300),
-              curve: Curves.easeInOut,
-            );
-          },
+      leading: IconButton(
+        icon: Icon(
+          Icons.arrow_back_ios_outlined,
+          size: 28.0,
+          color: Theme.of(context).focusColor,
         ),
-      ],
+        splashColor: Theme.of(context).disabledColor.withOpacity(0.25),
+        splashRadius: 22.0,
+        onPressed: () {
+          List<Setting> settings = List.from(data.keys);
+          List<ValueNotifier<dynamic>> notifiers = List.from(data.values);
+          for (int i = 0; i < settings.length; i++) {
+            settings[i].value = notifiers[i].value.toString();
+          }
+          SettingBloc.updateSettings(settings);
+          GlobalParameters.screenController.animateToPage(
+            1,
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeInOut,
+          );
+        },
+      ),
       centerTitle: true,
       title: Text(
         'Настройки',
@@ -116,6 +114,12 @@ class _SettingList extends StatelessWidget {
 
   final List<Setting> settings;
   final Map<Setting, ValueNotifier<dynamic>> data;
+
+  void onPressed(Setting setting, ValueNotifier<dynamic> notifier) {
+    notifier.value = !notifier.value;
+    setting.value = notifier.value.toString();
+    SettingBloc.updateSettings([setting]);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -174,7 +178,7 @@ class _SettingList extends StatelessWidget {
               padding: const EdgeInsets.all(0),
               onPressed: () {
                 if (valueList[index].value is bool) {
-                  valueList[index].value = !valueList[index].value;
+                  onPressed(settings[index], valueList[index]);
                 }
               },
               child: Padding(
@@ -211,7 +215,7 @@ class _SettingList extends StatelessWidget {
                           return Checkbox(
                             value: valueList[index].value,
                             onChanged: (value) {
-                              valueList[index].value = !valueList[index].value;
+                              onPressed(settings[index], valueList[index]);
                             },
                             fillColor: MaterialStateProperty.all(
                                 Theme.of(context).focusColor),

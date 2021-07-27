@@ -46,7 +46,6 @@ abstract class SettingBloc {
   }
 
   static Future<void> updateSettings(List<Setting> settings)async{
-    _settingStreamController.sink.add(SettingState._settingLoading());
     SettingRepository.updateSettings(settings).then((_) {
     }).onError((Error error, StackTrace stackTrace) {
       if (!_settingStreamController.isClosed) {

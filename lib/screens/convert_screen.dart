@@ -12,10 +12,7 @@ import '../bloc/history_bloc.dart';
 import '../models/currency.dart';
 import '../models/exchange.dart';
 import '../services/amount_text_input_formatter.dart';
-import '../services/next_page_route.dart';
 import '../constants.dart';
-import 'history_screen.dart';
-import 'settings_screen.dart';
 
 class ConvertScreen extends StatelessWidget {
   ConvertScreen({
@@ -202,9 +199,11 @@ class ConvertScreen extends StatelessWidget {
                     } else if (snapshot.data is InfoLoadingState) {
                       return const LoadingLabel();
                     } else if (snapshot.data is InfoDataState) {
-                      if (GlobalParameters.exchangeNotifier.value.leftCurrency!.value.iso ==
+                      if (GlobalParameters.exchangeNotifier.value.leftCurrency!
+                                  .value.iso ==
                               null ||
-                          GlobalParameters.exchangeNotifier.value.rightCurrency!.value.iso ==
+                          GlobalParameters.exchangeNotifier.value.rightCurrency!
+                                  .value.iso ==
                               null) {
                         ExchangeBloc.getFirstTwoCurrencies();
                       } else {
@@ -266,19 +265,19 @@ class ConvertScreen extends StatelessWidget {
                           ),
                           onPressed: () {
                             if (snapshot.data is! InfoLoadingState) {
-                              String left =
-                                  GlobalParameters.exchangeNotifier.value.leftValue.text;
-                              String right =
-                                  GlobalParameters.exchangeNotifier.value.rightValue.text;
+                              String left = GlobalParameters
+                                  .exchangeNotifier.value.leftValue.text;
+                              String right = GlobalParameters
+                                  .exchangeNotifier.value.rightValue.text;
                               DateTime now = DateTime.now();
                               CurrencyBloc.updateCurrencies().then((_) {
                                 ExchangeBloc.updateExchange(Exchange(
                                   time:
                                       '${now.hour}:${now.minute} ${now.day}.${now.month}.${now.year}',
-                                  leftCurrency:
-                                  GlobalParameters.exchangeNotifier.value.leftCurrency,
-                                  rightCurrency:
-                                  GlobalParameters.exchangeNotifier.value.rightCurrency,
+                                  leftCurrency: GlobalParameters
+                                      .exchangeNotifier.value.leftCurrency,
+                                  rightCurrency: GlobalParameters
+                                      .exchangeNotifier.value.rightCurrency,
                                 )
                                       ..leftValue.text = left
                                           .replaceAll(',', '.')
@@ -359,12 +358,12 @@ class ConvertScreen extends StatelessWidget {
                         } else {
                           GlobalParameters.exchangeNotifier.value.leftCurrency =
                               state.exchange.leftCurrency!;
-                          GlobalParameters.exchangeNotifier.value.rightCurrency =
-                              state.exchange.rightCurrency!;
-                          GlobalParameters.exchangeNotifier.value.leftValue.text =
-                              state.exchange.leftValue.text;
-                          GlobalParameters.exchangeNotifier.value.rightValue.text =
-                              state.exchange.rightValue.text;
+                          GlobalParameters.exchangeNotifier.value
+                              .rightCurrency = state.exchange.rightCurrency!;
+                          GlobalParameters.exchangeNotifier.value.leftValue
+                              .text = state.exchange.leftValue.text;
+                          GlobalParameters.exchangeNotifier.value.rightValue
+                              .text = state.exchange.rightValue.text;
                         }
                       } else {
                         changeValue('');
@@ -372,10 +371,10 @@ class ConvertScreen extends StatelessWidget {
                       return Column(
                         children: [
                           CurrencyInputField(
-                            currencyNotifier:
-                            GlobalParameters.exchangeNotifier.value.leftCurrency!,
-                            textEditingController:
-                            GlobalParameters.exchangeNotifier.value.leftValue,
+                            currencyNotifier: GlobalParameters
+                                .exchangeNotifier.value.leftCurrency!,
+                            textEditingController: GlobalParameters
+                                .exchangeNotifier.value.leftValue,
                             currencyScrollOffset: currencyScrollOffset1,
                             addToHistory: addToHistory,
                           ),
@@ -390,12 +389,14 @@ class ConvertScreen extends StatelessWidget {
                                 .withOpacity(0.25),
                             splashRadius: 22.0,
                             onPressed: () {
-                              final Currency currency =
-                                  GlobalParameters.exchangeNotifier.value.leftCurrency!.value;
-                              GlobalParameters.exchangeNotifier.value.leftCurrency!.value =
-                                  GlobalParameters.exchangeNotifier.value.rightCurrency!.value;
-                              GlobalParameters.exchangeNotifier.value.rightCurrency!.value =
-                                  currency;
+                              final Currency currency = GlobalParameters
+                                  .exchangeNotifier.value.leftCurrency!.value;
+                              GlobalParameters.exchangeNotifier.value
+                                      .leftCurrency!.value =
+                                  GlobalParameters.exchangeNotifier.value
+                                      .rightCurrency!.value;
+                              GlobalParameters.exchangeNotifier.value
+                                  .rightCurrency!.value = currency;
                               final double offset = currencyScrollOffset1.value;
                               currencyScrollOffset1.value =
                                   currencyScrollOffset2.value;
@@ -405,10 +406,10 @@ class ConvertScreen extends StatelessWidget {
                           ),
                           CurrencyInputField(
                             enabled: false,
-                            currencyNotifier:
-                            GlobalParameters.exchangeNotifier.value.rightCurrency!,
-                            textEditingController:
-                            GlobalParameters.exchangeNotifier.value.rightValue,
+                            currencyNotifier: GlobalParameters
+                                .exchangeNotifier.value.rightCurrency!,
+                            textEditingController: GlobalParameters
+                                .exchangeNotifier.value.rightValue,
                             currencyScrollOffset: currencyScrollOffset2,
                             addToHistory: addToHistory,
                           ),
@@ -452,7 +453,7 @@ class _AppBar extends StatelessWidget implements PreferredSizeWidget {
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       leading: IconButton(
         icon: Icon(
-          Icons.settings_outlined,
+          Icons.history_outlined,
           size: 28.0,
           color: Theme.of(context).focusColor,
         ),
@@ -474,7 +475,7 @@ class _AppBar extends StatelessWidget implements PreferredSizeWidget {
       actions: [
         IconButton(
           icon: Icon(
-            Icons.history_outlined,
+            Icons.settings_outlined,
             size: 28.0,
             color: Theme.of(context).focusColor,
           ),

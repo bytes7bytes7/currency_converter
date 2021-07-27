@@ -15,10 +15,10 @@ class MainScreen extends StatelessWidget {
       physics: const BouncingScrollPhysics(),
       controller: GlobalParameters.screenController,
       scrollDirection: Axis.horizontal,
-      children:[
-        const SettingsScreen(),
-        ConvertScreen(),
+      children: [
         const HistoryScreen(),
+        ConvertScreen(),
+        const SettingsScreen(),
       ],
     );
   }

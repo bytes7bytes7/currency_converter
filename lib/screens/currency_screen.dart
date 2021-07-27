@@ -1,11 +1,10 @@
-import 'package:currency_converter/bloc/exchange_bloc.dart';
-import 'package:currency_converter/widgets/search_bar.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
+import '../bloc/currency_bloc.dart';
+import '../bloc/exchange_bloc.dart';
 import '../widgets/loading_circle.dart';
 import '../models/currency.dart';
-import '../bloc/currency_bloc.dart';
 
 List<Currency> search(Map<String, dynamic> map) {
   if (map['value'].isEmpty) {
@@ -195,18 +194,21 @@ class _AppBar extends StatelessWidget implements PreferredSizeWidget {
   Widget build(BuildContext context) {
     return AppBar(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      leading: IconButton(
-        icon: Icon(
-          Icons.arrow_back_ios_outlined,
-          size: 28.0,
-          color: Theme.of(context).focusColor,
+      leading: const SizedBox.shrink(),
+      actions: [
+        IconButton(
+          icon: Icon(
+            Icons.close_outlined,
+            size: 28.0,
+            color: Theme.of(context).focusColor,
+          ),
+          splashColor: Theme.of(context).disabledColor.withOpacity(0.25),
+          splashRadius: 22.0,
+          onPressed: () {
+            Navigator.pop(context);
+          },
         ),
-        splashColor: Theme.of(context).disabledColor.withOpacity(0.25),
-        splashRadius: 22.0,
-        onPressed: () {
-          Navigator.pop(context);
-        },
-      ),
+      ],
       centerTitle: true,
       title: Text(
         'Валюта',

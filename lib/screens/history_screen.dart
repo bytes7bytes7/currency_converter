@@ -71,18 +71,14 @@ class _AppBar extends StatelessWidget implements PreferredSizeWidget {
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       leading: IconButton(
         icon: Icon(
-          Icons.arrow_back_ios_outlined,
+          Icons.delete_outline_outlined,
           size: 28.0,
           color: Theme.of(context).focusColor,
         ),
         splashColor: Theme.of(context).disabledColor.withOpacity(0.25),
         splashRadius: 22.0,
         onPressed: () {
-          GlobalParameters.screenController.animateToPage(
-            1,
-            duration: const Duration(milliseconds: 300),
-            curve: Curves.easeInOut,
-          );
+          HistoryBloc.deleteAllExchanges();
         },
       ),
       centerTitle: true,
@@ -93,14 +89,18 @@ class _AppBar extends StatelessWidget implements PreferredSizeWidget {
       actions: [
         IconButton(
           icon: Icon(
-            Icons.delete_outline_outlined,
+            Icons.arrow_forward_ios_outlined,
             size: 28.0,
             color: Theme.of(context).focusColor,
           ),
           splashColor: Theme.of(context).disabledColor.withOpacity(0.25),
           splashRadius: 22.0,
           onPressed: () {
-            HistoryBloc.deleteAllExchanges();
+            GlobalParameters.screenController.animateToPage(
+              1,
+              duration: const Duration(milliseconds: 300),
+              curve: Curves.easeInOut,
+            );
           },
         ),
       ],
@@ -121,8 +121,7 @@ class _HistoryList extends StatelessWidget {
       ..leftValue.value = exchanges[index].leftValue.value
       ..rightValue.value = exchanges[index].rightValue.value
       ..leftCurrency!.value = exchanges[index].leftCurrency!.value
-      ..rightCurrency!.value =
-          exchanges[index].rightCurrency!.value;
+      ..rightCurrency!.value = exchanges[index].rightCurrency!.value;
     Navigator.pop(context);
   }
 
