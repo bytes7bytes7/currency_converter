@@ -1,3 +1,4 @@
+import 'package:currency_converter/widgets/show_no_yes_dialog.dart';
 import 'package:flutter/material.dart';
 
 import '../bloc/history_bloc.dart';
@@ -78,7 +79,18 @@ class _AppBar extends StatelessWidget implements PreferredSizeWidget {
         splashColor: Theme.of(context).disabledColor.withOpacity(0.25),
         splashRadius: 22.0,
         onPressed: () {
-          HistoryBloc.deleteAllExchanges();
+          showNoYesDialog(
+            context: context,
+            title: 'Удалить историю?',
+            subtitle: 'Отменить действие будет невозможно',
+            noAnswer: () {
+              Navigator.pop(context);
+            },
+            yesAnswer: () {
+              HistoryBloc.deleteAllExchanges();
+              Navigator.pop(context);
+            },
+          );
         },
       ),
       centerTitle: true,
