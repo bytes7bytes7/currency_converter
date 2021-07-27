@@ -1,8 +1,10 @@
-import 'package:currency_converter/global_parameters.dart';
-import 'package:currency_converter/screens/convert_screen.dart';
-import 'package:currency_converter/screens/history_screen.dart';
-import 'package:currency_converter/screens/settings_screen.dart';
 import 'package:flutter/material.dart';
+
+import '../global_parameters.dart';
+import '../screens/advanced_settings_screen.dart';
+import '../screens/convert_screen.dart';
+import '../screens/history_screen.dart';
+import '../screens/settings_screen.dart';
 
 class MainScreen extends StatelessWidget {
   const MainScreen({
@@ -11,15 +13,27 @@ class MainScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return PageView(
-      physics: const BouncingScrollPhysics(),
-      controller: GlobalParameters.screenController,
-      scrollDirection: Axis.horizontal,
-      children: [
-        const HistoryScreen(),
-        ConvertScreen(),
-        const SettingsScreen(),
-      ],
+    return ValueListenableBuilder<bool>(
+      valueListenable: GlobalParameters.openAdvanced,
+      builder: (context, open, _) {
+        return PageView(
+          physics: const BouncingScrollPhysics(),
+          controller: GlobalParameters.screenController,
+          scrollDirection: Axis.horizontal,
+          children: (open)
+              ? [
+                  const HistoryScreen(),
+                  ConvertScreen(),
+                  const SettingsScreen(),
+                  const AdvancedSettingsScreen(),
+                ]
+              : [
+                  const HistoryScreen(),
+                  ConvertScreen(),
+                  const SettingsScreen(),
+                ],
+        );
+      },
     );
   }
 }

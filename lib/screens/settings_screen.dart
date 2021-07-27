@@ -224,7 +224,15 @@ class _SettingList extends StatelessWidget {
                         } else {
                           return IconButton(
                             icon: const Icon(Icons.arrow_forward_ios_outlined),
-                            onPressed: () {},
+                            splashRadius: 22.0,
+                            onPressed: () {
+                              GlobalParameters.openAdvanced.value=true;
+                              GlobalParameters.screenController.animateToPage(
+                                3,
+                                duration: const Duration(milliseconds: 300),
+                                curve: Curves.easeInOut,
+                              );
+                            },
                           );
                         }
                       },
