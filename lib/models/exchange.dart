@@ -15,6 +15,16 @@ class Exchange {
   TextEditingController leftValue = TextEditingController();
   TextEditingController rightValue = TextEditingController();
 
+  @override
+  int get hashCode =>
+      '$time&${leftCurrency?.value.iso ?? ''}&${rightCurrency?.value.iso ?? ''}&${leftValue.text}&${rightValue.text}'
+          .hashCode;
+
+  @override
+  bool operator ==(other) {
+    return hashCode == other.hashCode;
+  }
+
   Exchange.from(Exchange other) {
     time = other.time;
     leftCurrency = ValueNotifier(Currency.from(other.leftCurrency!.value));

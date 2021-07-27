@@ -82,6 +82,8 @@ abstract class ConstantDBData {
   static const String title = 'title';
   static const String subtitle = 'subtitle';
   static const String icon = 'icon';
+  static const String description = 'description';
+  static const String options = 'options';
 
   static final List<Setting> defaultSettings = [
     Setting(
@@ -111,8 +113,17 @@ abstract class ConstantDBData {
     Setting(
       title: 'Удаление истории',
       subtitle: 'Автоматическое удаление истории через время',
-      value: '',
+      value: 'Никогда',
       icon: 'auto_delete_outlined',
+      description: 'Через какое время автоматически удалять историю?',
+      options: [
+        'Сразу',
+        'День',
+        'Неделя',
+        'Месяц',
+        'Год',
+        'Никогда',
+      ],
     ),
   ];
 }

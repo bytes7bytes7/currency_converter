@@ -4,7 +4,7 @@ import '../repositories/info_repository.dart';
 
 abstract class InfoBloc {
   static final StreamController<InfoState> _infoStreamController =
-      StreamController<InfoState>();
+      StreamController<InfoState>.broadcast();
 
   static Stream<InfoState> get info {
     return _infoStreamController.stream;

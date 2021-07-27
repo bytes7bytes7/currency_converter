@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 
+import '../models/exchange.dart';
 import '../models/currency.dart';
 import '../screens/currency_screen.dart';
 import '../database/database_helper.dart';
+import '../global_parameters.dart';
 
 class CurrencyInputField extends StatelessWidget {
   const CurrencyInputField({
@@ -66,7 +68,10 @@ class CurrencyInputField extends StatelessWidget {
               valueListenable: currencyNotifier,
               builder: (context, _, __) {
                 if (textEditingController.text.isNotEmpty && enabled) {
-                  addToHistory();
+                  if (GlobalParameters.lastExchange.value != GlobalParameters.exchangeNotifier.value) {
+                    addToHistory();
+                    GlobalParameters.lastExchange.value = Exchange.from(GlobalParameters.exchangeNotifier.value);
+                  }
                 }
                 if (currencyNotifier.value.rate == null) {
                   loadCurrencyData();

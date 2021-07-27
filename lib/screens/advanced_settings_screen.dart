@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../models/setting.dart';
+import '../bloc/setting_bloc.dart';
 import '../global_parameters.dart';
 
 class AdvancedSettingsScreen extends StatelessWidget {
@@ -8,12 +8,100 @@ class AdvancedSettingsScreen extends StatelessWidget {
     Key? key,
   }) : super(key: key);
 
+  void onPressed(ValueNotifier<String> notifier, String value) {
+    if(notifier.value != value) {
+      notifier.value = value;
+      GlobalParameters.advancedSetting.value.value = notifier.value;
+      SettingBloc.updateSettings([GlobalParameters.advancedSetting.value]);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    Map<Setting, ValueNotifier<dynamic>> data = {};
+    ValueNotifier<String> selectedOption = ValueNotifier('');
+    selectedOption.value = GlobalParameters.advancedSetting.value.value!;
     return Scaffold(
-      appBar: _AppBar(
-        data: data,
+      appBar: const _AppBar(),
+      body: SafeArea(
+        child: ValueListenableBuilder(
+          valueListenable: selectedOption,
+          builder: (context, selected, _) {
+            return ListView.separated(
+              itemCount:
+              GlobalParameters.advancedSetting.value.options.length + 1,
+              separatorBuilder: (context, index) {
+                if (index == 0) {
+                  return const SizedBox.shrink();
+                } else {
+                  return Container(
+                    margin: const EdgeInsets.symmetric(horizontal: 30.0),
+                    height: 1.0,
+                    width: double.infinity,
+                    color: Theme
+                        .of(context)
+                        .disabledColor
+                        .withOpacity(0.25),
+                  );
+                }
+              },
+              itemBuilder: (context, index) {
+                if (index == 0) {
+                  return Padding(
+                    padding: const EdgeInsets.all(30.0),
+                    child: Text(
+                      GlobalParameters.advancedSetting.value.description,
+                      style: Theme
+                          .of(context)
+                          .textTheme
+                          .bodyText2,
+                    ),
+                  );
+                } else {
+                  String thisOption =
+                  GlobalParameters.advancedSetting.value.options[index - 1];
+                  return Container(
+                    margin: const EdgeInsets.symmetric(vertical: 10),
+                    child: RawMaterialButton(
+                      padding: const EdgeInsets.all(0),
+                      onPressed: () {
+                        onPressed(selectedOption, thisOption);
+                      },
+                      child: SizedBox(
+                        height: 40.0,
+                        width: double.infinity,
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 30.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                thisOption,
+                                style: Theme
+                                    .of(context)
+                                    .textTheme
+                                    .bodyText2,
+                              ),
+                              IconButton(
+                                icon: (selectedOption.value == thisOption)
+                                    ? const Icon(Icons.radio_button_on_outlined)
+                                    : const Icon(
+                                    Icons.radio_button_off_outlined),
+                                splashRadius: 22.0,
+                                onPressed: () {
+                                  onPressed(selectedOption, thisOption);
+                                },
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  );
+                }
+              },
+            );
+          },
+        ),
       ),
     );
   }
@@ -22,10 +110,7 @@ class AdvancedSettingsScreen extends StatelessWidget {
 class _AppBar extends StatelessWidget implements PreferredSizeWidget {
   const _AppBar({
     Key? key,
-    required this.data,
   }) : super(key: key);
-
-  final Map<Setting, ValueNotifier<dynamic>> data;
 
   @override
   Size get preferredSize => const Size.fromHeight(60.0);
@@ -33,14 +118,21 @@ class _AppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      backgroundColor: Theme
+          .of(context)
+          .scaffoldBackgroundColor,
       leading: IconButton(
         icon: Icon(
           Icons.arrow_back_ios_outlined,
           size: 28.0,
-          color: Theme.of(context).focusColor,
+          color: Theme
+              .of(context)
+              .focusColor,
         ),
-        splashColor: Theme.of(context).disabledColor.withOpacity(0.25),
+        splashColor: Theme
+            .of(context)
+            .disabledColor
+            .withOpacity(0.25),
         splashRadius: 22.0,
         onPressed: () {
           GlobalParameters.screenController.animateToPage(
@@ -52,8 +144,11 @@ class _AppBar extends StatelessWidget implements PreferredSizeWidget {
       ),
       centerTitle: true,
       title: Text(
-        'Дополнительно',
-        style: Theme.of(context).textTheme.headline1,
+        GlobalParameters.advancedSetting.value.title!,
+        style: Theme
+            .of(context)
+            .textTheme
+            .headline1,
       ),
     );
   }

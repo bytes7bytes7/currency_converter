@@ -5,7 +5,7 @@ import '../repositories/exchange_repository.dart';
 
 abstract class ExchangeBloc {
   static final StreamController<ExchangeState> _exchangeStreamController =
-      StreamController<ExchangeState>();
+      StreamController<ExchangeState>.broadcast();
 
   static Stream<ExchangeState> get exchange {
     return _exchangeStreamController.stream;

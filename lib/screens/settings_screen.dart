@@ -226,6 +226,7 @@ class _SettingList extends StatelessWidget {
                             icon: const Icon(Icons.arrow_forward_ios_outlined),
                             splashRadius: 22.0,
                             onPressed: () {
+                              GlobalParameters.advancedSetting.value = settings[index];
                               GlobalParameters.openAdvanced.value=true;
                               GlobalParameters.screenController.animateToPage(
                                 3,

@@ -63,7 +63,9 @@ class DatabaseHelper {
         ${ConstantDBData.title} TEXT PRIMARY KEY,
         ${ConstantDBData.subtitle} TEXT,
         ${ConstantDBData.value} TEXT,
-        ${ConstantDBData.icon} TEXT
+        ${ConstantDBData.icon} TEXT,
+        ${ConstantDBData.description} TEXT,
+        ${ConstantDBData.options} TEXT
       )
     ''');
   }
@@ -289,12 +291,14 @@ class DatabaseHelper {
     final db = await database;
     for (var setting in settings) {
       await db.rawInsert(
-        "INSERT INTO ${ConstantDBData.settingsTableName} (${ConstantDBData.title}, ${ConstantDBData.subtitle}, ${ConstantDBData.value}, ${ConstantDBData.icon}) VALUES (?,?,?,?)",
+        "INSERT INTO ${ConstantDBData.settingsTableName} (${ConstantDBData.title}, ${ConstantDBData.subtitle}, ${ConstantDBData.value}, ${ConstantDBData.icon}, ${ConstantDBData.description}, ${ConstantDBData.options}) VALUES (?,?,?,?,?,?)",
         [
           setting.title,
           setting.subtitle,
           setting.value,
           setting.icon,
+          setting.description,
+          setting.options.join(';'),
         ],
       );
     }
@@ -319,6 +323,8 @@ class DatabaseHelper {
             ConstantDBData.subtitle: setting.subtitle,
             ConstantDBData.value: setting.value,
             ConstantDBData.icon: setting.icon,
+            ConstantDBData.description: setting.description,
+            ConstantDBData.options: setting.options.join(';'),
           },
           where: "${ConstantDBData.title} = ?",
           whereArgs: [setting.title],

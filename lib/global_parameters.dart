@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'models/exchange.dart';
 import 'models/currency.dart';
+import 'models/setting.dart';
 
 abstract class GlobalParameters {
   static final ValueNotifier<bool> openAdvanced = ValueNotifier(false);
@@ -17,4 +18,12 @@ abstract class GlobalParameters {
       rightCurrency: ValueNotifier(Currency()),
     ),
   );
+  static final ValueNotifier<Exchange> lastExchange = ValueNotifier(
+    Exchange(
+      leftCurrency: ValueNotifier(Currency()),
+      rightCurrency: ValueNotifier(Currency()),
+    ),
+  );
+
+  static final ValueNotifier<Setting> advancedSetting = ValueNotifier(Setting());
 }
