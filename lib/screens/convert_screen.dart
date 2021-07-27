@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
 
-import '../global_parameters.dart';
-import '../widgets/loading_circle.dart';
-import '../widgets/loading_label.dart';
-import '../widgets/number_panel.dart';
-import '../widgets/currency_input_field.dart';
 import '../bloc/info_bloc.dart';
 import '../bloc/currency_bloc.dart';
 import '../bloc/exchange_bloc.dart';
 import '../bloc/history_bloc.dart';
+import '../widgets/loading_circle.dart';
+import '../widgets/loading_label.dart';
+import '../widgets/number_panel.dart';
+import '../widgets/currency_input_field.dart';
 import '../models/currency.dart';
 import '../models/exchange.dart';
 import '../services/amount_text_input_formatter.dart';
 import '../constants.dart';
+import '../global_parameters.dart';
 
 class ConvertScreen extends StatelessWidget {
   ConvertScreen({

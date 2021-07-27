@@ -1,10 +1,10 @@
-import 'package:currency_converter/global_parameters.dart';
 import 'package:flutter/material.dart';
 
-import '../models/exchange.dart';
 import '../bloc/history_bloc.dart';
-import '../constants.dart';
 import '../widgets/loading_circle.dart';
+import '../models/exchange.dart';
+import '../constants.dart';
+import '../global_parameters.dart';
 
 class HistoryScreen extends StatelessWidget {
   const HistoryScreen({

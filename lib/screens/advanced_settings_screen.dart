@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../global_parameters.dart';
 import '../models/setting.dart';
+import '../global_parameters.dart';
 
 class AdvancedSettingsScreen extends StatelessWidget {
   const AdvancedSettingsScreen({

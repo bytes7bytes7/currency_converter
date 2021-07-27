@@ -1,5 +1,6 @@
-import 'package:currency_converter/models/setting.dart';
 import 'package:flutter/material.dart';
+
+import 'models/setting.dart';
 
 abstract class ConstantColors {
   static const Color scaffoldBackgroundColor = Color(0xFFF4FBFF);

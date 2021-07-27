@@ -1,8 +1,8 @@
 import 'dart:async';
 
 import '../bloc/info_bloc.dart';
-import '../repositories/currency_repository.dart';
 import '../models/currency.dart';
+import '../repositories/currency_repository.dart';
 
 abstract class CurrencyBloc {
   static final StreamController<CurrencyState> _currencyStreamController =

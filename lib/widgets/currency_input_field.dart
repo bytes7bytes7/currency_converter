@@ -1,8 +1,8 @@
-import 'package:currency_converter/database/database_helper.dart';
 import 'package:flutter/material.dart';
 
 import '../models/currency.dart';
 import '../screens/currency_screen.dart';
+import '../database/database_helper.dart';
 
 class CurrencyInputField extends StatelessWidget {
   const CurrencyInputField({

@@ -1,10 +1,10 @@
 import 'dart:io';
-import 'package:currency_converter/models/setting.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path_provider/path_provider.dart';
 
+import '../models/setting.dart';
 import '../models/exchange.dart';
 import '../models/currency.dart';
 import '../constants.dart';

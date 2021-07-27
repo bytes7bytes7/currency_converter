@@ -1,10 +1,10 @@
 import 'dart:convert';
-import 'package:currency_converter/constants.dart';
-import 'package:currency_converter/database/database_helper.dart';
-import 'package:currency_converter/services/win1251_decoder.dart';
 import 'package:http/http.dart' as http;
 
+import '../database/database_helper.dart';
 import '../models/currency.dart';
+import '../constants.dart';
+import 'win1251_decoder.dart';
 
 abstract class CurrencyService {
   static Future<List<Currency>> updateCurrencies() async {

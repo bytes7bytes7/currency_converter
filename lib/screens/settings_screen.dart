@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
-import '../global_parameters.dart';
 import '../widgets/loading_circle.dart';
 import '../bloc/setting_bloc.dart';
 import '../models/setting.dart';
+import '../global_parameters.dart';
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({

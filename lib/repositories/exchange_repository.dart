@@ -1,5 +1,5 @@
-import '../models/exchange.dart';
 import '../database/database_helper.dart';
+import '../models/exchange.dart';
 
 abstract class ExchangeRepository {
   static Future<Exchange> _getCurrenciesInfo(Exchange exchange) async {

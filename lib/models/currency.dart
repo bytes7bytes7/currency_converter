@@ -1,4 +1,4 @@
-import 'package:currency_converter/constants.dart';
+import '../constants.dart';
 
 class Currency {
   Currency({

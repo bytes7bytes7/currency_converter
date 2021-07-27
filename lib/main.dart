@@ -21,8 +21,7 @@ class MyApp extends StatelessWidget {
       title: 'Currency Converter',
       theme: lightTheme,
       debugShowCheckedModeBanner: false,
-      // home: ConvertScreen(),
-      home:const MainScreen(),
+      home: const MainScreen(),
     );
   }
 }

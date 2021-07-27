@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
 import '../global_parameters.dart';
-import '../screens/advanced_settings_screen.dart';
-import '../screens/convert_screen.dart';
-import '../screens/history_screen.dart';
-import '../screens/settings_screen.dart';
+import 'advanced_settings_screen.dart';
+import 'convert_screen.dart';
+import 'history_screen.dart';
+import 'settings_screen.dart';
 
 class MainScreen extends StatelessWidget {
   const MainScreen({
