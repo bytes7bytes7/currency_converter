@@ -70,6 +70,7 @@ abstract class ConstantDBData {
 
   // Info keys
   static const String lastTimeUpdated = 'lastTimeUpdated';
+  static const String lastState = 'lastState';
 
   // historyTable
   static const String time = 'time';

@@ -60,14 +60,14 @@ class AdvancedSettingsScreen extends StatelessWidget {
                   String thisOption =
                   GlobalParameters.advancedSetting.value.options[index - 1];
                   return Container(
-                    margin: const EdgeInsets.symmetric(vertical: 10),
+                    margin: const EdgeInsets.symmetric(vertical: 6),
                     child: RawMaterialButton(
                       padding: const EdgeInsets.all(0),
                       onPressed: () {
                         onPressed(selectedOption, thisOption);
                       },
                       child: SizedBox(
-                        height: 40.0,
+                        height: 44.0,
                         width: double.infinity,
                         child: Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 30.0),

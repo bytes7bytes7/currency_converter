@@ -1,22 +1,29 @@
 import '../database/database_helper.dart';
 import '../models/exchange.dart';
+import '../constants.dart';
 
 abstract class ExchangeRepository {
   static Future<Exchange> _getCurrenciesInfo(Exchange exchange) async {
     exchange.leftCurrency!.value =
-        await DatabaseHelper.db.getCurrency(exchange.leftCurrency!.value.iso!);
+    await DatabaseHelper.db.getCurrency(exchange.leftCurrency!.value.iso!);
     exchange.rightCurrency!.value =
-        await DatabaseHelper.db.getCurrency(exchange.rightCurrency!.value.iso!);
+    await DatabaseHelper.db.getCurrency(exchange.rightCurrency!.value.iso!);
     return exchange;
   }
 
-  static Future<Exchange> getLastExchange() async {
-    Exchange exchange = await DatabaseHelper.db.getLastExchange();
+  static Future<Exchange> getLastState()async{
+    Exchange exchange = Exchange.fromString(await DatabaseHelper.db.getInfo(ConstantDBData.lastState));
+    if(exchange.rightCurrency == null){
+      exchange = await getFirstTwoCurrencies();
+    }
     return await _getCurrenciesInfo(exchange);
   }
 
   static Future<Exchange> getLastTwoCurrencies() async {
-    Exchange exchange = await DatabaseHelper.db.getLastExchange();
+    Exchange exchange = Exchange.fromString(await DatabaseHelper.db.getInfo(ConstantDBData.lastState));
+    if(exchange.rightCurrency == null){
+      exchange = await getFirstTwoCurrencies();
+    }
     exchange.leftValue.text = '';
     exchange.rightValue.text = '';
     return await _getCurrenciesInfo(exchange);

@@ -14,5 +14,3 @@ abstract class SettingRepository {
     return await DatabaseHelper.db.updateSettings(settings);
   }
 }
-
-

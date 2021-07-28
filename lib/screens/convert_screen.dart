@@ -145,6 +145,7 @@ class ConvertScreen extends StatelessWidget {
       GlobalParameters.exchangeNotifier.value.rightValue.text = '';
     }
     lastAction.value = action;
+    InfoBloc.updateInfo(ConstantDBData.lastState, GlobalParameters.exchangeNotifier.value.toString());
   }
 
   void cleanField() {
@@ -175,7 +176,15 @@ class ConvertScreen extends StatelessWidget {
                   initialData: InfoInitState(),
                   builder: (context, snapshot) {
                     if (snapshot.data is InfoInitState) {
-                      InfoBloc.getLastDate();
+                      if (GlobalParameters.allSettings
+                              .where((e) => e.title == 'Автообновление')
+                              .first
+                              .value ==
+                          'true') {
+                        CurrencyBloc.updateCurrencies();
+                      } else {
+                        InfoBloc.getLastDate();
+                      }
                       return RawMaterialButton(
                         splashColor:
                             Theme.of(context).disabledColor.withOpacity(0.25),
@@ -205,7 +214,21 @@ class ConvertScreen extends StatelessWidget {
                           GlobalParameters.exchangeNotifier.value.rightCurrency!
                                   .value.iso ==
                               null) {
-                        ExchangeBloc.getFirstTwoCurrencies();
+                        if (GlobalParameters.allSettings
+                                .where((e) => e.title == 'Сохранение состояния')
+                                .first
+                                .value ==
+                            'true') {
+                          ExchangeBloc.getLastExchange();
+                        } else if (GlobalParameters.allSettings
+                                .where((e) => e.title == 'Сохранение валют')
+                                .first
+                                .value ==
+                            'true') {
+                          ExchangeBloc.getLastTwoCurrencies();
+                        } else {
+                          ExchangeBloc.getFirstTwoCurrencies();
+                        }
                       } else {
                         ExchangeBloc.updateCalculation();
                       }

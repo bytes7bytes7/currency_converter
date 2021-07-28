@@ -134,7 +134,11 @@ class _HistoryList extends StatelessWidget {
       ..rightValue.value = exchanges[index].rightValue.value
       ..leftCurrency!.value = exchanges[index].leftCurrency!.value
       ..rightCurrency!.value = exchanges[index].rightCurrency!.value;
-    Navigator.pop(context);
+    GlobalParameters.screenController.animateToPage(
+      1,
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
+    );
   }
 
   @override

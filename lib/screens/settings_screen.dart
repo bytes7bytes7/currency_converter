@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../widgets/loading_circle.dart';
 import '../bloc/setting_bloc.dart';
 import '../models/setting.dart';
 import '../global_parameters.dart';
@@ -19,39 +18,8 @@ class SettingsScreen extends StatelessWidget {
       ),
       body: SafeArea(
         child: Center(
-          child: StreamBuilder(
-            stream: SettingBloc.setting,
-            initialData: SettingInitState(),
-            builder: (context, snapshot) {
-              if (snapshot.data is SettingInitState) {
-                SettingBloc.getSettings();
-                return const SizedBox.shrink();
-              } else if (snapshot.data is SettingLoadingState) {
-                return const SizedBox(
-                  height: 50.0,
-                  width: 50.0,
-                  child: LoadingCircle(),
-                );
-              } else if (snapshot.data is SettingDataState) {
-                SettingDataState state = snapshot.data as SettingDataState;
-                if (state.settings.isEmpty) {
-                  SettingBloc.addDefaultSettings();
-                  return Center(
-                    child: Text(
-                      'Пусто',
-                      style: Theme.of(context).textTheme.subtitle2,
-                    ),
-                  );
-                } else {
-                  return _SettingList(
-                    settings: state.settings,
-                    data: data,
-                  );
-                }
-              } else {
-                return const SizedBox.shrink();
-              }
-            },
+          child: _SettingList(
+            data: data,
           ),
         ),
       ),
@@ -108,17 +76,25 @@ class _AppBar extends StatelessWidget implements PreferredSizeWidget {
 class _SettingList extends StatelessWidget {
   const _SettingList({
     Key? key,
-    required this.settings,
     required this.data,
   }) : super(key: key);
 
-  final List<Setting> settings;
   final Map<Setting, ValueNotifier<dynamic>> data;
 
   void onPressed(Setting setting, ValueNotifier<dynamic> notifier) {
     notifier.value = !notifier.value;
     setting.value = notifier.value.toString();
     SettingBloc.updateSettings([setting]);
+  }
+
+  void openAdvanced(int index) {
+    GlobalParameters.advancedSetting.value = GlobalParameters.allSettings[index];
+    GlobalParameters.openAdvanced.value = true;
+    GlobalParameters.screenController.animateToPage(
+      3,
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
+    );
   }
 
   @override
@@ -129,7 +105,7 @@ class _SettingList extends StatelessWidget {
       radius: const Radius.circular(5),
       child: ListView.separated(
         physics: const BouncingScrollPhysics(),
-        itemCount: settings.length,
+        itemCount: GlobalParameters.allSettings.length,
         separatorBuilder: (context, index) {
           return Container(
             margin: const EdgeInsets.symmetric(horizontal: 30.0),
@@ -139,7 +115,7 @@ class _SettingList extends StatelessWidget {
           );
         },
         itemBuilder: (context, index) {
-          switch (settings[index].value) {
+          switch (GlobalParameters.allSettings[index].value) {
             case 'true':
               valueList.add(ValueNotifier<bool>(true));
               break;
@@ -147,11 +123,11 @@ class _SettingList extends StatelessWidget {
               valueList.add(ValueNotifier<bool>(false));
               break;
             default:
-              valueList.add(ValueNotifier<String>(settings[index].value!));
+              valueList.add(ValueNotifier<String>(GlobalParameters.allSettings[index].value!));
           }
-          data[settings[index]] = valueList[index];
+          data[GlobalParameters.allSettings[index]] = valueList[index];
           IconData icon;
-          switch (settings[index].icon) {
+          switch (GlobalParameters.allSettings[index].icon) {
             case 'dark_mode_outlined':
               icon = Icons.dark_mode_outlined;
               break;
@@ -178,7 +154,9 @@ class _SettingList extends StatelessWidget {
               padding: const EdgeInsets.all(0),
               onPressed: () {
                 if (valueList[index].value is bool) {
-                  onPressed(settings[index], valueList[index]);
+                  onPressed(GlobalParameters.allSettings[index], valueList[index]);
+                } else {
+                  openAdvanced(index);
                 }
               },
               child: Padding(
@@ -197,13 +175,15 @@ class _SettingList extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            settings[index].title!,
+                            GlobalParameters.allSettings[index].title!,
                             style: Theme.of(context).textTheme.headline1,
+                            overflow: TextOverflow.ellipsis,
                           ),
                           Text(
-                            settings[index].subtitle!,
+                            GlobalParameters.allSettings[index].subtitle!,
                             style: Theme.of(context).textTheme.subtitle1,
                             maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
                           ),
                         ],
                       ),
@@ -215,7 +195,7 @@ class _SettingList extends StatelessWidget {
                           return Checkbox(
                             value: valueList[index].value,
                             onChanged: (value) {
-                              onPressed(settings[index], valueList[index]);
+                              onPressed(GlobalParameters.allSettings[index], valueList[index]);
                             },
                             fillColor: MaterialStateProperty.all(
                                 Theme.of(context).focusColor),
@@ -226,13 +206,7 @@ class _SettingList extends StatelessWidget {
                             icon: const Icon(Icons.arrow_forward_ios_outlined),
                             splashRadius: 22.0,
                             onPressed: () {
-                              GlobalParameters.advancedSetting.value = settings[index];
-                              GlobalParameters.openAdvanced.value=true;
-                              GlobalParameters.screenController.animateToPage(
-                                3,
-                                duration: const Duration(milliseconds: 300),
-                                curve: Curves.easeInOut,
-                              );
+                              openAdvanced(index);
                             },
                           );
                         }

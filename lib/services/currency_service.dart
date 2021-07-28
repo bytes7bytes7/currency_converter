@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
+import '../repositories/info_repository.dart';
 import '../database/database_helper.dart';
 import '../models/currency.dart';
 import '../constants.dart';
@@ -54,7 +55,7 @@ abstract class CurrencyService {
     DateTime now = DateTime.now();
     String date =
         '${now.hour}:${now.minute} ${now.day}.${now.month}.${now.year}';
-    await DatabaseHelper.db.updateInfo(ConstantDBData.lastTimeUpdated, date);
+    await InfoRepository.updateInfo(ConstantDBData.lastTimeUpdated, date);
     await DatabaseHelper.db.updateAllCurrencies(currencies);
     return currencies;
   }

@@ -2,6 +2,7 @@ import 'dart:async';
 
 import '../models/exchange.dart';
 import '../repositories/exchange_repository.dart';
+import '../global_parameters.dart';
 
 abstract class ExchangeBloc {
   static final StreamController<ExchangeState> _exchangeStreamController =
@@ -19,7 +20,7 @@ abstract class ExchangeBloc {
 
   static Future<void> getLastExchange() async {
     _exchangeStreamController.sink.add(ExchangeState._exchangeLoading());
-    ExchangeRepository.getLastExchange().then((exchange) {
+    ExchangeRepository.getLastState().then((exchange) {
       if (!_exchangeStreamController.isClosed) {
         _exchangeStreamController.sink.add(ExchangeState._exchangeData(exchange));
       }
@@ -33,7 +34,8 @@ abstract class ExchangeBloc {
 
   static Future<void> getLastTwoCurrencies() async {
     _exchangeStreamController.sink.add(ExchangeState._exchangeLoading());
-    ExchangeRepository.getLastTwoCurrencies().then((exchange) {
+    ExchangeRepository.getLastState().then((exchange) {
+      GlobalParameters.exchangeNotifier.value = exchange;
       if (!_exchangeStreamController.isClosed) {
         _exchangeStreamController.sink.add(ExchangeState._exchangeData(exchange));
       }

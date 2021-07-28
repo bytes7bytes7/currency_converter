@@ -211,7 +211,7 @@ class DatabaseHelper {
       whereArgs: [key],
     );
     if (data.isNotEmpty) {
-      return Map<String, dynamic>.from(data.first)['value'];
+      return Map<String, String>.from(data.first)['value']!;
     } else {
       return ConstantDBData.unknown;
     }
@@ -230,17 +230,6 @@ class DatabaseHelper {
         exchange.rightValue.text,
       ],
     );
-  }
-
-  Future<Exchange> getLastExchange() async {
-    final db = await database;
-    List<Map<String, dynamic>> data = await db.rawQuery(
-        'SELECT * FROM ${ConstantDBData.historyTableName} ORDER BY ${ConstantDBData.time} DESC LIMIT 1;');
-    if (data.isNotEmpty) {
-      return Exchange.fromMap(data.first);
-    } else {
-      return Exchange();
-    }
   }
 
   Future<Exchange> getFirstTwoCurrencies() async {
@@ -304,7 +293,7 @@ class DatabaseHelper {
     }
   }
 
-  Future<List<Setting>> addDefaultSettings()async{
+  Future<List<Setting>> addDefaultSettings() async {
     await _addSettings(ConstantDBData.defaultSettings);
     return ConstantDBData.defaultSettings;
   }

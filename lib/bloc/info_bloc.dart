@@ -16,9 +16,17 @@ abstract class InfoBloc {
   //   }
   // }
 
+  static Future<void> updateInfo(String key, String value) async {
+    InfoRepository.updateInfo(key, value).onError((Error error, StackTrace stackTrace) {
+      if (!_infoStreamController.isClosed) {
+        _infoStreamController.sink.add(InfoState._infoError(error, stackTrace));
+      }
+    });
+  }
+
   static Future<void> getLastDate() async {
     _infoStreamController.sink.add(InfoState._infoLoading());
-    InfoRepository.getLastDate().then((date) {
+    InfoRepository.getLastDate().then((String date) {
       if (!_infoStreamController.isClosed) {
         _infoStreamController.sink.add(InfoState._infoData(date));
       }
@@ -62,8 +70,7 @@ class InfoErrorState extends InfoState {
   final StackTrace stackTrace;
 }
 
-class InfoLoadingErrorState extends InfoState {
-}
+class InfoLoadingErrorState extends InfoState {}
 
 class InfoDataState extends InfoState {
   InfoDataState(this.date);
