@@ -1,15 +1,35 @@
 import 'package:flutter/material.dart';
+import 'package:adaptive_theme/adaptive_theme.dart';
 
 import '../bloc/setting_bloc.dart';
 import '../global_parameters.dart';
+import '../constants.dart';
 
 class AdvancedSettingsScreen extends StatelessWidget {
   const AdvancedSettingsScreen({
     Key? key,
   }) : super(key: key);
 
-  void onPressed(ValueNotifier<String> notifier, String value) {
-    if(notifier.value != value) {
+  void onPressed(String title, ValueNotifier<String> notifier, String value,
+      BuildContext context) {
+    void changeTheme() {
+      switch (value) {
+        case ConstantDBData.lightThemeValue:
+          AdaptiveTheme.of(context).setLight();
+          break;
+        case ConstantDBData.darkThemeValue:
+          AdaptiveTheme.of(context).setDark();
+          break;
+        case ConstantDBData.systemThemeValue:
+          AdaptiveTheme.of(context).setSystem();
+          break;
+      }
+    }
+
+    if (notifier.value != value) {
+      if (title == ConstantDBData.themeParameter) {
+        changeTheme();
+      }
       notifier.value = value;
       GlobalParameters.advancedSetting.value.value = notifier.value;
       SettingBloc.updateSettings([GlobalParameters.advancedSetting.value]);
@@ -28,7 +48,7 @@ class AdvancedSettingsScreen extends StatelessWidget {
           builder: (context, selected, _) {
             return ListView.separated(
               itemCount:
-              GlobalParameters.advancedSetting.value.options.length + 1,
+                  GlobalParameters.advancedSetting.value.options.length + 1,
               separatorBuilder: (context, index) {
                 if (index == 0) {
                   return const SizedBox.shrink();
@@ -37,34 +57,32 @@ class AdvancedSettingsScreen extends StatelessWidget {
                     margin: const EdgeInsets.symmetric(horizontal: 30.0),
                     height: 1.0,
                     width: double.infinity,
-                    color: Theme
-                        .of(context)
-                        .disabledColor
-                        .withOpacity(0.25),
+                    color: Theme.of(context).disabledColor.withOpacity(0.25),
                   );
                 }
               },
               itemBuilder: (context, index) {
                 if (index == 0) {
                   return Padding(
-                    padding: const EdgeInsets.all(30.0),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 30.0,
+                      vertical: 20.0,
+                    ),
                     child: Text(
                       GlobalParameters.advancedSetting.value.description,
-                      style: Theme
-                          .of(context)
-                          .textTheme
-                          .bodyText2,
+                      style: Theme.of(context).textTheme.bodyText2,
                     ),
                   );
                 } else {
                   String thisOption =
-                  GlobalParameters.advancedSetting.value.options[index - 1];
+                      GlobalParameters.advancedSetting.value.options[index - 1];
                   return Container(
                     margin: const EdgeInsets.symmetric(vertical: 6),
                     child: RawMaterialButton(
                       padding: const EdgeInsets.all(0),
                       onPressed: () {
-                        onPressed(selectedOption, thisOption);
+                        onPressed(GlobalParameters.advancedSetting.value.title!,
+                            selectedOption, thisOption, context);
                       },
                       child: SizedBox(
                         height: 44.0,
@@ -76,19 +94,22 @@ class AdvancedSettingsScreen extends StatelessWidget {
                             children: [
                               Text(
                                 thisOption,
-                                style: Theme
-                                    .of(context)
-                                    .textTheme
-                                    .bodyText2,
+                                style: Theme.of(context).textTheme.bodyText2,
                               ),
                               IconButton(
                                 icon: (selectedOption.value == thisOption)
                                     ? const Icon(Icons.radio_button_on_outlined)
                                     : const Icon(
-                                    Icons.radio_button_off_outlined),
+                                        Icons.radio_button_off_outlined),
+                                color: Theme.of(context).focusColor,
                                 splashRadius: 22.0,
                                 onPressed: () {
-                                  onPressed(selectedOption, thisOption);
+                                  onPressed(
+                                      GlobalParameters
+                                          .advancedSetting.value.title!,
+                                      selectedOption,
+                                      thisOption,
+                                      context);
                                 },
                               ),
                             ],
@@ -118,21 +139,14 @@ class _AppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      backgroundColor: Theme
-          .of(context)
-          .scaffoldBackgroundColor,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       leading: IconButton(
         icon: Icon(
           Icons.arrow_back_ios_outlined,
           size: 28.0,
-          color: Theme
-              .of(context)
-              .focusColor,
+          color: Theme.of(context).focusColor,
         ),
-        splashColor: Theme
-            .of(context)
-            .disabledColor
-            .withOpacity(0.25),
+        splashColor: Theme.of(context).disabledColor.withOpacity(0.25),
         splashRadius: 22.0,
         onPressed: () {
           GlobalParameters.screenController.animateToPage(
@@ -145,10 +159,7 @@ class _AppBar extends StatelessWidget implements PreferredSizeWidget {
       centerTitle: true,
       title: Text(
         GlobalParameters.advancedSetting.value.title!,
-        style: Theme
-            .of(context)
-            .textTheme
-            .headline1,
+        style: Theme.of(context).textTheme.headline1,
       ),
     );
   }

@@ -12,12 +12,6 @@ abstract class ExchangeBloc {
     return _exchangeStreamController.stream;
   }
 
-  // void dispose() {
-  //   if(!_exchangeStreamController.isClosed) {
-  //     _exchangeStreamController.close();
-  //   }
-  // }
-
   static Future<void> getLastExchange() async {
     _exchangeStreamController.sink.add(ExchangeState._exchangeLoading());
     ExchangeRepository.getLastState().then((exchange) {

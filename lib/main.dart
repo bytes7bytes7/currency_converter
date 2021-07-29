@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:adaptive_theme/adaptive_theme.dart';
 
 import 'themes/light_theme.dart';
+import 'themes/dark_theme.dart';
 import 'screens/main_screen.dart';
 
 void main() {
@@ -17,11 +19,19 @@ class MyApp extends StatelessWidget {
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
     ]);
-    return MaterialApp(
-      title: 'Currency Converter',
-      theme: lightTheme,
-      debugShowCheckedModeBanner: false,
-      home: const MainScreen(),
+    return AdaptiveTheme(
+      light: lightTheme,
+      dark: darkTheme,
+      initial: AdaptiveThemeMode.light,
+      builder: (lightTheme, darkTheme) {
+        return MaterialApp(
+          title: 'Currency Converter',
+          theme: lightTheme,
+          darkTheme: darkTheme,
+          debugShowCheckedModeBanner: false,
+          home: const MainScreen(),
+        );
+      },
     );
   }
 }

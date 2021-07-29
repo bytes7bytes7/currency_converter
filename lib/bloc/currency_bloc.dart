@@ -12,12 +12,6 @@ abstract class CurrencyBloc {
     return _currencyStreamController.stream;
   }
 
-  // void dispose() {
-  //   if(!_currencyStreamController.isClosed) {
-  //     _currencyStreamController.close();
-  //   }
-  // }
-
   static Future<void> updateCurrencies() async {
     InfoBloc.sinkLoading();
     _currencyStreamController.sink.add(CurrencyState._currencyLoading());

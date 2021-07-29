@@ -3,9 +3,13 @@ import 'package:flutter/material.dart';
 import 'models/setting.dart';
 
 abstract class ConstantColors {
-  static const Color scaffoldBackgroundColor = Color(0xFFF4FBFF);
-  static const Color focusColor = Color(0xFF000000);
-  static const Color disabledColor = Color(0xFF878787);
+  static const Color lightScaffoldBackgroundColor = Color(0xFFF4FBFF);
+  static const Color lightFocusColor = Color(0xFF000000);
+  static const Color lightDisabledColor = Color(0xFF878787);
+
+  static const Color darkScaffoldBackgroundColor = Colors.blueGrey;
+  static const Color darkFocusColor = Colors.white;
+  static const Color darkDisabledColor = Colors.grey;
 }
 
 abstract class ConstantData {
@@ -86,13 +90,12 @@ abstract class ConstantDBData {
   static const String description = 'description';
   static const String options = 'options';
 
+
+  static const String themeParameter = 'Тема';
+  static const String lightThemeValue = 'Светлая';
+  static const String darkThemeValue = 'Темная';
+  static const String systemThemeValue = 'Системная';
   static final List<Setting> defaultSettings = [
-    Setting(
-      title: 'Ночной режим',
-      subtitle: 'Темная тема',
-      value: 'false',
-      icon: 'dark_mode_outlined',
-    ),
     Setting(
       title: 'Сохранение валют',
       subtitle: 'Сохранение выбранных валют при выходе',
@@ -110,6 +113,18 @@ abstract class ConstantDBData {
       subtitle: 'Сохранение последнего расчета при выходе',
       value: 'false',
       icon: 'save',
+    ),
+    Setting(
+      title: themeParameter,
+      subtitle: 'Тема приложения',
+      value: 'Светлая',
+      icon: 'brightness_6_outlined',
+      description: 'Выберите цветовую тему приложения',
+      options: [
+        lightThemeValue,
+        darkThemeValue,
+        systemThemeValue,
+      ],
     ),
     Setting(
       title: 'Удаление истории',

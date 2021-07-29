@@ -11,11 +11,6 @@ abstract class HistoryBloc {
     return _historyStreamController.stream;
   }
 
-  // void dispose() {
-  //   if (!_historyStreamController.isClosed) {
-  //     _historyStreamController.close();
-  //   }
-  // }
 
   static Future<void> addExchange(Exchange exchange) async {
     _historyStreamController.sink.add(HistoryState._exchangeLoading());

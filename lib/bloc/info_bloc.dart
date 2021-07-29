@@ -10,12 +10,6 @@ abstract class InfoBloc {
     return _infoStreamController.stream;
   }
 
-  // void dispose() {
-  //   if(!_infoStreamController.isClosed) {
-  //     _infoStreamController.close();
-  //   }
-  // }
-
   static Future<void> updateInfo(String key, String value) async {
     InfoRepository.updateInfo(key, value).onError((Error error, StackTrace stackTrace) {
       if (!_infoStreamController.isClosed) {

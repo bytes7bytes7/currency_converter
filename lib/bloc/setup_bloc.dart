@@ -12,12 +12,6 @@ abstract class SetupBloc {
     return _setupStreamController.stream;
   }
 
-  // void dispose() {
-  //   if(!_settingStreamController.isClosed) {
-  //     _settingStreamController.close();
-  //   }
-  // }
-
   static Future<void> setupAllSettings() async {
     _setupStreamController.sink.add(SetupState._setupLoading());
     SettingRepository.getSettings().then((List<Setting> settings) {

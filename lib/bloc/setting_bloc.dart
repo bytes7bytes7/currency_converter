@@ -11,12 +11,6 @@ abstract class SettingBloc {
     return _settingStreamController.stream;
   }
 
-  // void dispose() {
-  //   if(!_settingStreamController.isClosed) {
-  //     _settingStreamController.close();
-  //   }
-  // }
-
   static Future<void> updateSettings(List<Setting> settings)async{
     SettingRepository.updateSettings(settings).then((_) {
     }).onError((Error error, StackTrace stackTrace) {

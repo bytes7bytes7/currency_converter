@@ -88,7 +88,8 @@ class _SettingList extends StatelessWidget {
   }
 
   void openAdvanced(int index) {
-    GlobalParameters.advancedSetting.value = GlobalParameters.allSettings[index];
+    GlobalParameters.advancedSetting.value =
+        GlobalParameters.allSettings[index];
     GlobalParameters.openAdvanced.value = true;
     GlobalParameters.screenController.animateToPage(
       3,
@@ -123,13 +124,14 @@ class _SettingList extends StatelessWidget {
               valueList.add(ValueNotifier<bool>(false));
               break;
             default:
-              valueList.add(ValueNotifier<String>(GlobalParameters.allSettings[index].value!));
+              valueList.add(ValueNotifier<String>(
+                  GlobalParameters.allSettings[index].value!));
           }
           data[GlobalParameters.allSettings[index]] = valueList[index];
           IconData icon;
           switch (GlobalParameters.allSettings[index].icon) {
-            case 'dark_mode_outlined':
-              icon = Icons.dark_mode_outlined;
+            case 'brightness_6_outlined':
+              icon = Icons.brightness_6_outlined;
               break;
             case 'save_alt_outlined':
               icon = Icons.save_alt_outlined;
@@ -154,7 +156,8 @@ class _SettingList extends StatelessWidget {
               padding: const EdgeInsets.all(0),
               onPressed: () {
                 if (valueList[index].value is bool) {
-                  onPressed(GlobalParameters.allSettings[index], valueList[index]);
+                  onPressed(
+                      GlobalParameters.allSettings[index], valueList[index]);
                 } else {
                   openAdvanced(index);
                 }
@@ -195,15 +198,20 @@ class _SettingList extends StatelessWidget {
                           return Checkbox(
                             value: valueList[index].value,
                             onChanged: (value) {
-                              onPressed(GlobalParameters.allSettings[index], valueList[index]);
+                              onPressed(GlobalParameters.allSettings[index],
+                                  valueList[index]);
                             },
                             fillColor: MaterialStateProperty.all(
                                 Theme.of(context).focusColor),
+                            checkColor: Theme.of(context).scaffoldBackgroundColor,
                             activeColor: Theme.of(context).focusColor,
                           );
                         } else {
                           return IconButton(
-                            icon: const Icon(Icons.arrow_forward_ios_outlined),
+                            icon: Icon(
+                              Icons.arrow_forward_ios_outlined,
+                              color: Theme.of(context).focusColor,
+                            ),
                             splashRadius: 22.0,
                             onPressed: () {
                               openAdvanced(index);
