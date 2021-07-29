@@ -7,9 +7,9 @@ abstract class ConstantColors {
   static const Color lightFocusColor = Color(0xFF000000);
   static const Color lightDisabledColor = Color(0xFF878787);
 
-  static const Color darkScaffoldBackgroundColor = Colors.blueGrey;
-  static const Color darkFocusColor = Colors.white;
-  static const Color darkDisabledColor = Colors.grey;
+  static const Color darkScaffoldBackgroundColor = Color(0xFF002941);
+  static const Color darkFocusColor = Color(0xFFFFFFFF);
+  static const Color darkDisabledColor = Color(0xFFA3D8FF);
 }
 
 abstract class ConstantData {
@@ -90,11 +90,17 @@ abstract class ConstantDBData {
   static const String description = 'description';
   static const String options = 'options';
 
-
   static const String themeParameter = 'Тема';
   static const String lightThemeValue = 'Светлая';
   static const String darkThemeValue = 'Темная';
   static const String systemThemeValue = 'Системная';
+  static const String deleteHistory = 'Удаление истории';
+  static const String deleteHistoryImmediately = 'Сразу';
+  static const String deleteHistoryDay = 'День';
+  static const String deleteHistoryWeek = 'Неделя';
+  static const String deleteHistoryMonth = 'Месяц';
+  static const String deleteHistoryYear = 'Год';
+  static const String deleteHistoryNever = 'Никогда';
   static final List<Setting> defaultSettings = [
     Setting(
       title: 'Сохранение валют',
@@ -126,20 +132,20 @@ abstract class ConstantDBData {
         systemThemeValue,
       ],
     ),
-    Setting(
-      title: 'Удаление истории',
-      subtitle: 'Автоматическое удаление истории через время',
-      value: 'Никогда',
-      icon: 'auto_delete_outlined',
-      description: 'Через какое время автоматически удалять историю?',
-      options: [
-        'Сразу',
-        'День',
-        'Неделя',
-        'Месяц',
-        'Год',
-        'Никогда',
-      ],
-    ),
+    // Setting(
+    //   title: deleteHistory,
+    //   subtitle: 'Автоматическое удаление истории через время',
+    //   value: 'Никогда',
+    //   icon: 'auto_delete_outlined',
+    //   description: 'Через какое время автоматически удалять историю?',
+    //   options: [
+    //     deleteHistoryImmediately,
+    //     deleteHistoryDay,
+    //     deleteHistoryWeek,
+    //     deleteHistoryMonth,
+    //     deleteHistoryYear,
+    //     deleteHistoryNever,
+    //   ],
+    // ),
   ];
 }

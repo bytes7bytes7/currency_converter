@@ -33,18 +33,38 @@ class MainScreen extends StatelessWidget {
               Iterable<Setting> themeSetting = state.setup
                   .where((e) => e.title == ConstantDBData.themeParameter);
               if (themeSetting.isNotEmpty) {
-                switch (themeSetting.first.title) {
-                  case ConstantDBData.lightThemeValue:
-                    AdaptiveTheme.of(context).setLight();
-                    break;
-                  case ConstantDBData.darkThemeValue:
-                    AdaptiveTheme.of(context).setDark();
-                    break;
-                  case ConstantDBData.systemThemeValue:
-                    AdaptiveTheme.of(context).setSystem();
-                    break;
-                }
+                WidgetsBinding.instance!.addPostFrameCallback((_){
+                  switch (themeSetting.first.value) {
+                    case ConstantDBData.lightThemeValue:
+                      AdaptiveTheme.of(context).setLight();
+                      break;
+                    case ConstantDBData.darkThemeValue:
+                      AdaptiveTheme.of(context).setDark();
+                      break;
+                    case ConstantDBData.systemThemeValue:
+                      AdaptiveTheme.of(context).setSystem();
+                      break;
+                  }
+                });
               }
+              // Iterable<Setting> historySetting = state.setup.where((e) => e.title==ConstantDBData.deleteHistory);
+              // if(historySetting.isNotEmpty){
+              //   DateTime now = DateTime.now();
+              //   switch(historySetting.first.value){
+              //     case ConstantDBData.deleteHistoryImmediately:
+              //       break;
+              //     case ConstantDBData.deleteHistoryDay:
+              //       break;
+              //     case ConstantDBData.deleteHistoryWeek:
+              //       break;
+              //     case ConstantDBData.deleteHistoryMonth:
+              //       break;
+              //     case ConstantDBData.deleteHistoryYear:
+              //       break;
+              //     case ConstantDBData.deleteHistoryNever:
+              //       break;
+              //   }
+              // }
             }
           }
           if (GlobalParameters.allSettings.isEmpty) {
